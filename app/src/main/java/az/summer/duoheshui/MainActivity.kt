@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -58,21 +59,15 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         val currentScreen = mutableStateOf(Screen.Home.id)
 
         setContent {
             DuoheshuiTheme {
                 var openLoveDialog by remember { mutableStateOf(false) }
-                rememberSystemUiController().setStatusBarColor(
-                    Color.Transparent, darkIcons = isSystemInDarkTheme()
-                )
                 // A surface container using the 'background' color from the theme
                 Surface(
                     color = MaterialTheme.colorScheme.background,
-                    modifier = Modifier
-                        .systemBarsPadding()
-//                        .displayCutoutPadding()
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     Scaffold(
                         topBar = {

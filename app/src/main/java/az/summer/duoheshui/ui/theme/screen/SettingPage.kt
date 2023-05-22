@@ -152,12 +152,13 @@ fun SettingPage() {
                                     Button(
                                         enabled = verifyButtonState,
                                         onClick = {
-                                            verifyButtonState = false
                                             posttty(
                                                 "sendCode",
                                                 postmsg("sendCode", encryptomobile),
                                                 context
-                                            )
+                                            ) {
+                                                verifyButtonState = false
+                                            }
                                         },
                                         shape = RoundedCornerShape(16.dp)
                                     )
@@ -169,12 +170,13 @@ fun SettingPage() {
                             }
                             Spacer(modifier = Modifier.height(20.dp))
                             ElevatedButton(onClick = {
-                                openSignIn = false
                                 posttty(
                                     "loginByCode",
                                     postmsg("loginByCode", encryptocode),
                                     context
-                                )
+                                ) {
+                                    openSignIn = false
+                                }
                             }) {
                                 Text(text = "Let's Go")
                             }
@@ -314,7 +316,7 @@ fun SettingPage() {
 
                         )
                     Spacer(modifier = Modifier.height(20.dp))
-                    ElevatedButton(onClick = { /*TODO*/ }) {
+                    ElevatedButton(onClick = { openDevices = false }) {
                         Text(text = "Let's Go")
                     }
 
@@ -323,8 +325,8 @@ fun SettingPage() {
         }
         MainSettingItem(
             modifier = Modifier,
-            true,
-            true,
+            enable = false,
+            selected = true,
             title = "Setting",
             icon = Icons.Outlined.Settings,
             onClick = {

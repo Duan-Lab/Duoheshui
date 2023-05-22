@@ -17,7 +17,7 @@ var currentTime: Long = System.currentTimeMillis()
 var userInfo: String = ""
 
 @OptIn(DelicateCoroutinesApi::class)
-fun posttty(postType: String, postData: String, context: Context) {
+fun posttty(postType: String, postData: String, context: Context, cb: (() -> Unit)? = null) {
     val url = URL("http://newxiaotian.tianji-inc.com/api/v1/UserApi/$postType")
     val conn = url.openConnection() as HttpURLConnection
     conn.requestMethod = "POST"
@@ -51,6 +51,9 @@ fun posttty(postType: String, postData: String, context: Context) {
         println("Post parameters : $postData")
         println("Response Code : $responseCode")
 
+        if (cb != null) {
+            cb()
+        }
     }
 
 }
