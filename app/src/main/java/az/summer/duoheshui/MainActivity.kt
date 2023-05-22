@@ -8,8 +8,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -22,11 +24,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,94 +68,104 @@ class MainActivity : ComponentActivity() {
                     Color.Transparent, darkIcons = isSystemInDarkTheme()
                 )
                 // A surface container using the 'background' color from the theme
-                Scaffold(
-                    topBar = {
-                        if (openLoveDialog) {
-                            AlertDialog(
-                                onDismissRequest = { openLoveDialog = false },
-                                title = { Text(text = "谢谢") },
-                                text = {
-                                    Column(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center
-                                    ) {
-                                        Text(
-                                            text = "关注永雏塔菲喵",
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.align(CenterHorizontally),
-                                            style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp),
-                                        )
-                                        Text(
-                                            text = "关注永雏塔菲谢谢喵",
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.align(CenterHorizontally),
-                                            style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp),
-                                        )
-                                    }
-                                },
-                                confirmButton = {
-                                    TextButton(
-                                        onClick = {
-                                            openLoveDialog = false
+                Surface(
+                    color = MaterialTheme.colorScheme.background,
+                    modifier = Modifier
+                        .systemBarsPadding()
+//                        .displayCutoutPadding()
+                ) {
+                    Scaffold(
+                        topBar = {
+                            if (openLoveDialog) {
+                                AlertDialog(
+                                    onDismissRequest = { openLoveDialog = false },
+                                    title = { Text(text = "谢谢") },
+                                    text = {
+                                        Column(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Text(
+                                                text = "关注永雏塔菲喵",
+                                                textAlign = TextAlign.Center,
+                                                modifier = Modifier.align(CenterHorizontally),
+                                                style = MaterialTheme.typography.titleLarge.copy(
+                                                    fontSize = 16.sp
+                                                ),
+                                            )
+                                            Text(
+                                                text = "关注永雏塔菲谢谢喵",
+                                                textAlign = TextAlign.Center,
+                                                modifier = Modifier.align(CenterHorizontally),
+                                                style = MaterialTheme.typography.titleLarge.copy(
+                                                    fontSize = 16.sp
+                                                ),
+                                            )
                                         }
-                                    ) {
-                                        Text(text = "喵喵")
-                                    }
-                                },
-                                icon = { Icons.Outlined.FavoriteBorder }
-                            )
-                        }
-                        TopAppBar(
-                            title = {
-                                Text(
-                                    modifier = Modifier
-                                        .padding(0.dp),
-                                    text = "Duoheshui",
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1,
-                                    style = TextStyle(
-                                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                                        fontWeight = FontWeight.Normal
-                                    )
+                                    },
+                                    confirmButton = {
+                                        TextButton(
+                                            onClick = {
+                                                openLoveDialog = false
+                                            }
+                                        ) {
+                                            Text(text = "喵喵")
+                                        }
+                                    },
+                                    icon = { Icons.Outlined.FavoriteBorder }
                                 )
-                            },
-                            actions = {
-                                IconButton(onClick = {
-                                    openLoveDialog = true
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.FavoriteBorder,
-                                        contentDescription = "LOVE"
-                                    )
-
-                                }
                             }
-                        )
+                            TopAppBar(
+                                title = {
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(0.dp),
+                                        text = "Duoheshui",
+                                        overflow = TextOverflow.Ellipsis,
+                                        maxLines = 1,
+                                        style = TextStyle(
+                                            fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                            fontWeight = FontWeight.Normal
+                                        )
+                                    )
+                                },
+                                actions = {
+                                    IconButton(onClick = {
+                                        openLoveDialog = true
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.FavoriteBorder,
+                                            contentDescription = "LOVE"
+                                        )
 
-                    },
-                    bottomBar = {
+                                    }
+                                }
+                            )
+
+                        },
+                        bottomBar = {
 //                        AppNavigationBar(selectedId = currentScreen)
 
-                        Navigation(currentScreenId = currentScreen.value) {
-                            currentScreen.value = it.id
-                        }
-                    }) {
-                    it.calculateBottomPadding()
-                    Box(modifier = Modifier.padding(it)) {
-                        when (currentScreen.value) {
-                            Screen.Home.id -> HomePage()
-                            Screen.Profile.id -> ProfilePage()
-                            Screen.Setting.id -> SettingPage()
+                            Navigation(currentScreenId = currentScreen.value) {
+                                currentScreen.value = it.id
+                            }
+                        }) {
+                        it.calculateBottomPadding()
+                        Box(modifier = Modifier.padding(it)) {
+                            when (currentScreen.value) {
+                                Screen.Home.id -> HomePage()
+                                Screen.Profile.id -> ProfilePage()
+                                Screen.Setting.id -> SettingPage()
+                            }
                         }
                     }
-                }
 
+                }
             }
         }
     }
 }
-
 
 @Composable
 fun AppNavigationBar(selectedId: MutableState<String>) {

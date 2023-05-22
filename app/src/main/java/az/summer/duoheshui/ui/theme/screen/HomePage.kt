@@ -23,10 +23,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import az.summer.duoheshui.R
+import az.summer.duoheshui.module.CC
+import az.summer.duoheshui.module.ShareUtil
 import az.summer.duoheshui.module.SuperFloatingActionButton
 import az.summer.duoheshui.module.UserPersistentStorage
 import az.summer.duoheshui.module.drinkingPost
 import az.summer.duoheshui.module.drinkpostmsg
+import az.summer.duoheshui.module.enSetDrinkDevice
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -65,6 +68,12 @@ fun HomePage() {
                 },
                 onClick = {
                     Toast.makeText(context, "Wait...", Toast.LENGTH_SHORT).show()
+                    encryptoHotDevice =
+                        CC().encrypt(
+                            enSetDrinkDevice(
+                                ShareUtil.getString("hot", context).toString()
+                            )
+                        )
                     drinkingPost(
                         "send_command/send",
                         drinkpostmsg(
@@ -90,6 +99,12 @@ fun HomePage() {
                 },
                 onClick = {
                     Toast.makeText(context, "Wait...", Toast.LENGTH_SHORT).show()
+                    encryptoColdDevice =
+                        CC().encrypt(
+                            enSetDrinkDevice(
+                                ShareUtil.getString("cold", context).toString()
+                            )
+                        )
                     drinkingPost(
                         "send_command/send",
                         drinkpostmsg(

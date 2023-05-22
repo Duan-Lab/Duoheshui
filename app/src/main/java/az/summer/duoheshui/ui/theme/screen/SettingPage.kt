@@ -75,7 +75,7 @@ fun SettingPage() {
     val context = LocalContext.current
 
     var openDialog by remember { mutableStateOf(false) }
-    var openSignIn by remember { mutableStateOf(false) }
+    var openSignIn by remember { mutableStateOf(UserPersistentStorage(context).get() == null) }
     var openDevices by remember { mutableStateOf(false) }
     var openAbout by remember { mutableStateOf(false) }
     var verifyButtonState by remember { mutableStateOf(true) }
@@ -89,136 +89,137 @@ fun SettingPage() {
         verticalArrangement = Arrangement.Center,
     ) {
         if (openDialog) {
-            Dialog(
-                onDismissRequest = { openDialog = false },
-            ) {
-                Surface(
-                    modifier = Modifier,
-                    shape = RoundedCornerShape(24.dp),
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    onClick = { openSignIn = true }
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .size(400.dp, 400.dp)
-                            .background(MaterialTheme.colorScheme.primaryContainer),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
+            if (openSignIn) {
+                Dialog(onDismissRequest = { openDialog = false }) {
+                    Surface(
+                        modifier = Modifier,
+                        shape = RoundedCornerShape(24.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Person,
-                            contentDescription = "main",
-                            modifier = Modifier.size(150.dp),
-                        )
-                        Spacer(modifier = Modifier.height(20.dp))
-                        (
-                                if (UserPersistentStorage(context).get()?.mobile.isNullOrEmpty()) "Log in"
-                                else "Stu_" + (UserPersistentStorage(
-                                    context
-                                ).get()?.mobile?.substring(7) ?: "")).let {
+                        Column(
+                            modifier = Modifier
+                                .size(400.dp, 400.dp)
+                                .background(MaterialTheme.colorScheme.primaryContainer),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
                             Text(
-                                text = it,
+                                text = "Log in",
                                 modifier = Modifier,
-                                fontSize = 30.sp
+                                style = MaterialTheme.typography.titleLarge.copy(fontSize = 32.sp),
+                                color = MaterialTheme.colorScheme.primary
                             )
-                        }
+                            Spacer(modifier = Modifier.height(40.dp))
+                            OutlinedTextField(
+                                value = phoneNum.value,
+                                label = { Text(text = "Phone Number") },
+                                onValueChange = {
+                                    phoneNum.value = it
+                                    encryptomobile =
+                                        CC().encrypt(enMobile(phoneNum.component1().text))
 
-                    }
-                    if (openSignIn) {
-                        Dialog(onDismissRequest = { openSignIn = false }) {
-                            Surface(
+                                },
+                                modifier = Modifier.width(280.dp),
+                                singleLine = true
+                            )
+                            Spacer(modifier = Modifier.height(20.dp))
+
+                            Row(
                                 modifier = Modifier,
-                                shape = RoundedCornerShape(24.dp),
-                                color = MaterialTheme.colorScheme.primaryContainer
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Column(
-                                    modifier = Modifier
-                                        .size(400.dp, 400.dp)
-                                        .background(MaterialTheme.colorScheme.primaryContainer),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        text = "Log in",
-                                        modifier = Modifier,
-                                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 32.sp),
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                    Spacer(modifier = Modifier.height(40.dp))
-                                    OutlinedTextField(
-                                        value = phoneNum.value,
-                                        label = { Text(text = "Phone Number") },
+                                Box(modifier = Modifier.width(160.dp)) {
+                                    TextField(
+                                        value = verifyCode.value,
+                                        label = { Text(text = "Verify Code") },
                                         onValueChange = {
-                                            phoneNum.value = it
-                                            encryptomobile =
-                                                CC().encrypt(enMobile(phoneNum.component1().text))
-
-                                        },
-                                        modifier = Modifier.width(280.dp),
-                                        singleLine = true
-                                    )
-                                    Spacer(modifier = Modifier.height(20.dp))
-
-                                    Row(
-                                        modifier = Modifier,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Box(modifier = Modifier.width(160.dp)) {
-                                            TextField(
-                                                value = verifyCode.value,
-                                                label = { Text(text = "Verify Code") },
-                                                onValueChange = {
-                                                    verifyCode.value = it
-                                                    encryptocode = CC().encrypt(
-                                                        (enVcode(
-                                                            verifyCode.component1().text,
-                                                            phoneNum.component1().text
-                                                        ))
-                                                    )
-                                                },
-                                                singleLine = true,
-                                                colors = TextFieldDefaults.outlinedTextFieldColors(),
-
-                                                )
-                                        }
-                                        Spacer(modifier = Modifier.width(20.dp))
-                                        Box(modifier = Modifier) {
-
-                                            Button(
-                                                enabled = verifyButtonState,
-                                                onClick = {
-                                                    verifyButtonState = false
-                                                    posttty(
-                                                        "sendCode",
-                                                        postmsg("sendCode", encryptomobile),
-                                                        context
-                                                    )
-                                                },
-                                                shape = RoundedCornerShape(16.dp)
+                                            verifyCode.value = it
+                                            encryptocode = CC().encrypt(
+                                                (enVcode(
+                                                    verifyCode.component1().text,
+                                                    phoneNum.component1().text
+                                                ))
                                             )
-                                            {
-                                                Text(text = "Verify")
-                                            }
-                                        }
+                                        },
+                                        singleLine = true,
+                                        colors = TextFieldDefaults.outlinedTextFieldColors(),
 
-                                    }
-                                    Spacer(modifier = Modifier.height(20.dp))
-                                    ElevatedButton(onClick = {
-                                        posttty(
-                                            "loginByCode",
-                                            postmsg("loginByCode", encryptocode),
-                                            context
                                         )
-                                    }) {
-                                        Text(text = "Let's Go")
-                                    }
-
                                 }
+                                Spacer(modifier = Modifier.width(20.dp))
+                                Box(modifier = Modifier) {
+
+                                    Button(
+                                        enabled = verifyButtonState,
+                                        onClick = {
+                                            verifyButtonState = false
+                                            posttty(
+                                                "sendCode",
+                                                postmsg("sendCode", encryptomobile),
+                                                context
+                                            )
+                                        },
+                                        shape = RoundedCornerShape(16.dp)
+                                    )
+                                    {
+                                        Text(text = "Verify")
+                                    }
+                                }
+
                             }
+                            Spacer(modifier = Modifier.height(20.dp))
+                            ElevatedButton(onClick = {
+                                openSignIn = false
+                                posttty(
+                                    "loginByCode",
+                                    postmsg("loginByCode", encryptocode),
+                                    context
+                                )
+                            }) {
+                                Text(text = "Let's Go")
+                            }
+
                         }
                     }
                 }
+            } else {
+                Dialog(
+                    onDismissRequest = { openDialog = false },
+                ) {
+                    Surface(
+                        modifier = Modifier,
+                        shape = RoundedCornerShape(24.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .size(400.dp, 400.dp)
+                                .background(MaterialTheme.colorScheme.primaryContainer),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Person,
+                                contentDescription = "main",
+                                modifier = Modifier.size(150.dp),
+                            )
+                            Spacer(modifier = Modifier.height(20.dp))
+                            (
+                                    if (UserPersistentStorage(context).get()?.mobile.isNullOrEmpty()) "Log in"
+                                    else "Stu_" + (UserPersistentStorage(
+                                        context
+                                    ).get()?.mobile?.substring(7) ?: "")).let {
+                                Text(
+                                    text = it,
+                                    modifier = Modifier,
+                                    fontSize = 30.sp
+                                )
+                            }
 
+                        }
+                    }
+
+                }
             }
         }
         if (openAbout) Dialog(
@@ -272,8 +273,12 @@ fun SettingPage() {
                         value = hotDevice.value,
                         label = {
                             Text(
-                                text = if (ShareUtil.getString("hot", context)
+                                text =
+                                if (ShareUtil.getString("hot", context).toString()
                                         .isNullOrEmpty()
+                                ) "Hot Water"
+                                else if (ShareUtil.getString("hot", context)
+                                        .toString().length < 9
                                 ) "Hot Water" else ShareUtil.getString("hot", context).toString()
                             )
                         },
@@ -282,12 +287,6 @@ fun SettingPage() {
 //                            encryptoHotDevice =
 //                                CC().encrypt(enSetDrinkDevice(hotDevice.component1().text))
                             ShareUtil.putString("hot", hotDevice.value.text, context)
-                            encryptoHotDevice =
-                                CC().encrypt(
-                                    enSetDrinkDevice(
-                                        ShareUtil.getString("hot", context).toString()
-                                    )
-                                )
                         },
                         modifier = Modifier.width(280.dp),
                         singleLine = true,
@@ -295,20 +294,20 @@ fun SettingPage() {
                     Spacer(modifier = Modifier.height(20.dp))
                     OutlinedTextField(
                         value = coldDevice.value,
-                        label = {                          Text(
-                                text = if (ShareUtil.getString("cold", context)
+                        label = {
+                            Text(
+                                text =
+                                if (ShareUtil.getString("cold", context).toString()
                                         .isNullOrEmpty()
+                                ) "Cold Water"
+                                else if (ShareUtil.getString("cold", context)
+                                        .toString().length < 10
                                 ) "Cold Water" else ShareUtil.getString("cold", context).toString()
-                                ) },
+                            )
+                        },
                         onValueChange = {
                             coldDevice.value = it
                             ShareUtil.putString("cold", coldDevice.value.text, context)
-                            encryptoColdDevice =
-                                CC().encrypt(
-                                    enSetDrinkDevice(
-                                        ShareUtil.getString("cold", context).toString()
-                                    )
-                                )
                         },
                         modifier = Modifier.width(280.dp),
                         singleLine = true,
@@ -342,7 +341,11 @@ fun SettingPage() {
             title = "Accounts",
             icon = Icons.Outlined.AccountCircle,
             desc = "What could we do?",
-            onClick = { openDialog = true }
+            onClick = {
+                openDialog = true
+                openSignIn = UserPersistentStorage(context).get() == null
+
+            }
 
         )
         SettingItem(
