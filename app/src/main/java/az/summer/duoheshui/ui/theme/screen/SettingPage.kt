@@ -94,7 +94,8 @@ fun SettingPage() {
                     Surface(
                         modifier = Modifier,
                         shape = RoundedCornerShape(24.dp),
-                        color = MaterialTheme.colorScheme.primaryContainer
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        onClick = { }
                     ) {
                         Column(
                             modifier = Modifier
@@ -191,7 +192,8 @@ fun SettingPage() {
                     Surface(
                         modifier = Modifier,
                         shape = RoundedCornerShape(24.dp),
-                        color = MaterialTheme.colorScheme.primaryContainer
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        onClick = { }
                     ) {
                         Column(
                             modifier = Modifier
@@ -236,7 +238,7 @@ fun SettingPage() {
                 Column(
                     modifier = Modifier
                         .size(400.dp, 400.dp)
-                        .background(MaterialTheme.colorScheme.inversePrimary),
+                        .background(MaterialTheme.colorScheme.primaryContainer),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {

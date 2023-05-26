@@ -67,22 +67,30 @@ fun HomePage() {
                     )
                 },
                 onClick = {
-                    Toast.makeText(context, "Wait...", Toast.LENGTH_SHORT).show()
-                    encryptoHotDevice =
-                        CC().encrypt(
-                            enSetDrinkDevice(
-                                ShareUtil.getString("hot", context).toString()
+                    if (UserPersistentStorage(context).get() == null) Toast.makeText(
+                        context,
+                        "Please log in",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    else {
+                        Toast.makeText(context, "Wait...", Toast.LENGTH_SHORT).show()
+                        encryptoHotDevice =
+                            CC().encrypt(
+                                enSetDrinkDevice(
+                                    ShareUtil.getString("hot", context).toString()
+                                )
                             )
+                        drinkingPost(
+                            "send_command/send",
+                            drinkpostmsg(
+                                "send",
+                                encryptoHotDevice,
+                                UserPersistentStorage(context).get()?.token.toString()
+                            ),
+                            context
                         )
-                    drinkingPost(
-                        "send_command/send",
-                        drinkpostmsg(
-                            "send",
-                            encryptoHotDevice,
-                            UserPersistentStorage(context).get()?.token.toString()
-                        ),
-                        context
-                    )
+                    }
+
                 },
                 onLongClick = { Toast.makeText(context, "LongClick", Toast.LENGTH_SHORT).show() }
             )
@@ -98,22 +106,29 @@ fun HomePage() {
                     Text("COLD", style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp))
                 },
                 onClick = {
-                    Toast.makeText(context, "Wait...", Toast.LENGTH_SHORT).show()
-                    encryptoColdDevice =
-                        CC().encrypt(
-                            enSetDrinkDevice(
-                                ShareUtil.getString("cold", context).toString()
+                    if (UserPersistentStorage(context).get() == null) Toast.makeText(
+                        context,
+                        "Please log in",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    else {
+                        Toast.makeText(context, "Wait...", Toast.LENGTH_SHORT).show()
+                        encryptoColdDevice =
+                            CC().encrypt(
+                                enSetDrinkDevice(
+                                    ShareUtil.getString("cold", context).toString()
+                                )
                             )
+                        drinkingPost(
+                            "send_command/send",
+                            drinkpostmsg(
+                                "send",
+                                encryptoColdDevice,
+                                UserPersistentStorage(context).get()?.token.toString()
+                            ),
+                            context
                         )
-                    drinkingPost(
-                        "send_command/send",
-                        drinkpostmsg(
-                            "send",
-                            encryptoColdDevice,
-                            UserPersistentStorage(context).get()?.token.toString()
-                        ),
-                        context
-                    )
+                    }
                 },
                 onLongClick = {
                     val sharedToken = UserPersistentStorage(context).get()?.wallet?.balance

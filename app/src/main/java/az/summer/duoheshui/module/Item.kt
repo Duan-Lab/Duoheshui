@@ -101,10 +101,10 @@ fun MainSettingItem(
     Surface(
         modifier = modifier
             .clickable {
-                view.playSoundEffect(SoundEffectConstants.CLICK)
+//                view.playSoundEffect(SoundEffectConstants.CLICK)
                 onClick()
             }
-            .alpha(if (enable) 1f else 0.5f),
+            .alpha(if (enable) 1f else 1f),
         color = Color.Unspecified,
 
         ) {

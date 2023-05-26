@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -54,6 +55,14 @@ import az.summer.duoheshui.ui.theme.screen.ProfilePage
 import az.summer.duoheshui.ui.theme.navigation.Screen
 import az.summer.duoheshui.ui.theme.screen.SettingPage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import compose.icons.WeatherIcons
+import compose.icons.weathericons.DayFog
+import compose.icons.weathericons.Lightning
+import compose.icons.weathericons.MoonAltFull
+import compose.icons.weathericons.MoonAltWaxingGibbous2
+import compose.icons.weathericons.MoonAltWaxingGibbous6
+import compose.icons.weathericons.MoonNew
+import compose.icons.weathericons.NightClear
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -74,27 +83,23 @@ class MainActivity : ComponentActivity() {
                             if (openLoveDialog) {
                                 AlertDialog(
                                     onDismissRequest = { openLoveDialog = false },
-                                    title = { Text(text = "谢谢") },
                                     text = {
                                         Column(
                                             modifier = Modifier.fillMaxWidth(),
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             verticalArrangement = Arrangement.Center
                                         ) {
-                                            Text(
-                                                text = "关注永雏塔菲喵",
-                                                textAlign = TextAlign.Center,
-                                                modifier = Modifier.align(CenterHorizontally),
-                                                style = MaterialTheme.typography.titleLarge.copy(
-                                                    fontSize = 16.sp
-                                                ),
+                                            Icon(
+                                                imageVector = WeatherIcons.NightClear,
+                                                contentDescription = "like",
+                                                modifier = Modifier.size(200.dp),
                                             )
                                             Text(
-                                                text = "关注永雏塔菲谢谢喵",
+                                                text = "THANKS",
                                                 textAlign = TextAlign.Center,
                                                 modifier = Modifier.align(CenterHorizontally),
                                                 style = MaterialTheme.typography.titleLarge.copy(
-                                                    fontSize = 16.sp
+                                                    fontSize = 24.sp
                                                 ),
                                             )
                                         }
@@ -105,7 +110,7 @@ class MainActivity : ComponentActivity() {
                                                 openLoveDialog = false
                                             }
                                         ) {
-                                            Text(text = "喵喵")
+                                            Text(text = "meow")
                                         }
                                     },
                                     icon = { Icons.Outlined.FavoriteBorder }
