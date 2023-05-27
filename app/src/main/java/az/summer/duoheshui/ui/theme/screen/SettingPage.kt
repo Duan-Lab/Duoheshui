@@ -334,11 +334,7 @@ fun SettingPage() {
             enable = false,
             selected = true,
             title = "Setting",
-            icon = Icons.Outlined.Settings,
-            onClick = {
-//                Toast.makeText(context, "Setting", Toast.LENGTH_SHORT).show()
-            }
-
+            icon = Icons.Outlined.Settings
         )
         Spacer(modifier = Modifier.height(25.dp))
 
