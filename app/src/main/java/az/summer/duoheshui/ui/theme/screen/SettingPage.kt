@@ -36,6 +36,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -79,6 +81,7 @@ fun SettingPage() {
     var openDevices by remember { mutableStateOf(false) }
     var openAbout by remember { mutableStateOf(false) }
     var verifyButtonState by remember { mutableStateOf(true) }
+    val focusRequester = remember { FocusRequester() }
 
 
     Column(
@@ -142,10 +145,10 @@ fun SettingPage() {
                                                 ))
                                             )
                                         },
+                                        modifier = Modifier.focusRequester(focusRequester),
                                         singleLine = true,
                                         colors = TextFieldDefaults.outlinedTextFieldColors(),
-
-                                        )
+                                    )
                                 }
                                 Spacer(modifier = Modifier.width(20.dp))
                                 Box(modifier = Modifier) {
@@ -160,6 +163,7 @@ fun SettingPage() {
                                             ) {
                                                 verifyButtonState = false
                                             }
+                                            focusRequester.requestFocus()
                                         },
                                         shape = RoundedCornerShape(16.dp)
                                     )
