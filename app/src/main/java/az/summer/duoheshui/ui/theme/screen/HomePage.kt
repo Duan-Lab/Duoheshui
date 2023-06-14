@@ -69,7 +69,7 @@ fun HomePage() {
                 onClick = {
                     if (UserPersistentStorage(context).get() == null) Toast.makeText(
                         context,
-                        "Please log in",
+                        "Please login",
                         Toast.LENGTH_SHORT
                     ).show()
                     else {
@@ -106,7 +106,7 @@ fun HomePage() {
                     Text("COLD", style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp))
                 },
                 onClick = {
-                    if (UserPersistentStorage(context).get() == null) Toast.makeText(
+                    if (UserPersistentStorage(context).get()?.token == null) Toast.makeText(
                         context,
                         "Please log in",
                         Toast.LENGTH_SHORT

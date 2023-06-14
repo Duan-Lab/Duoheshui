@@ -77,7 +77,7 @@ fun SettingPage() {
     val context = LocalContext.current
 
     var openDialog by remember { mutableStateOf(false) }
-    var openSignIn by remember { mutableStateOf(UserPersistentStorage(context).get() == null) }
+    var openSignIn by remember { mutableStateOf(UserPersistentStorage(context).get()?.token.isNullOrEmpty()) }
     var openDevices by remember { mutableStateOf(false) }
     var openAbout by remember { mutableStateOf(false) }
     var verifyButtonState by remember { mutableStateOf(true) }
@@ -214,7 +214,7 @@ fun SettingPage() {
                             Spacer(modifier = Modifier.height(20.dp))
                             (
                                     if (UserPersistentStorage(context).get()?.mobile.isNullOrEmpty()) "Log in"
-                                    else "Stu_" + (UserPersistentStorage(
+                                    else "Stu " + (UserPersistentStorage(
                                         context
                                     ).get()?.mobile?.substring(7) ?: "")).let {
                                 Text(
@@ -323,7 +323,7 @@ fun SettingPage() {
                         )
                     Spacer(modifier = Modifier.height(20.dp))
                     ElevatedButton(onClick = { openDevices = false }) {
-                        Text(text = "Let's Go")
+                        Text(text = "Save")
                     }
 
                 }
