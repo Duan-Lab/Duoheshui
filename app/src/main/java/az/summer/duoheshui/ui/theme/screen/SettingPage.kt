@@ -20,8 +20,12 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -38,8 +42,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -69,7 +75,6 @@ var encryptoHotDevice = CC().encrypt(enSetDrinkDevice(hotDevice.component1().tex
 var coldDevice = mutableStateOf(TextFieldValue(""))
 var encryptoColdDevice = CC().encrypt(enSetDrinkDevice(coldDevice.component1().text))
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingPage() {
@@ -82,7 +87,7 @@ fun SettingPage() {
     var openAbout by remember { mutableStateOf(false) }
     var verifyButtonState by remember { mutableStateOf(true) }
     val focusRequester = remember { FocusRequester() }
-
+    var openLanguages by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -108,7 +113,7 @@ fun SettingPage() {
                             verticalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = "Log in",
+                                text = "Login",
                                 modifier = Modifier,
                                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 32.sp),
                                 color = MaterialTheme.colorScheme.primary
@@ -213,7 +218,7 @@ fun SettingPage() {
                             )
                             Spacer(modifier = Modifier.height(20.dp))
                             (
-                                    if (UserPersistentStorage(context).get()?.mobile.isNullOrEmpty()) "Log in"
+                                    if (UserPersistentStorage(context).get()?.mobile.isNullOrEmpty()) "Login"
                                     else "Stu " + (UserPersistentStorage(
                                         context
                                     ).get()?.mobile?.substring(7) ?: "")).let {
@@ -348,7 +353,6 @@ fun SettingPage() {
             onClick = {
                 openDialog = true
                 openSignIn = UserPersistentStorage(context).get() == null
-
             }
 
         )
@@ -370,6 +374,7 @@ fun SettingPage() {
             desc = "What could we do?",
             onClick = { }
         )
+
         SettingItem(
             modifier = Modifier,
             true,
@@ -377,8 +382,26 @@ fun SettingPage() {
             title = "Languages",
             icon = Icons.Outlined.Place,
             desc = "What could we do?",
-            onClick = { }
+            onClick = { openLanguages = true }
         )
+
+            DropdownMenu(
+                expanded = openLanguages,
+                offset = DpOffset(30.dp, (-15).dp),
+                onDismissRequest = {
+                    openLanguages = false
+                }
+            ) {
+                DropdownMenuItem(
+                    text = { Text("English") },
+                    onClick = { /* Handle edit! */ },)
+                DropdownMenuItem(
+                    text = { Text("简体中文") },
+                    onClick = { /* Handle edit! */ },)
+                DropdownMenuItem(
+                    text = { Text("繁體中文") },
+                    onClick = { /* Handle settings! */ },)
+        }
 
         SettingItem(
             modifier = Modifier,

@@ -108,7 +108,7 @@ fun HomePage() {
                 onClick = {
                     if (UserPersistentStorage(context).get()?.token == null) Toast.makeText(
                         context,
-                        "Please log in",
+                        "Please login",
                         Toast.LENGTH_SHORT
                     ).show()
                     else {
