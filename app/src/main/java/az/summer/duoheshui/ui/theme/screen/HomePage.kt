@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import az.summer.duoheshui.R
 import az.summer.duoheshui.module.CC
 import az.summer.duoheshui.module.ShareUtil
@@ -92,7 +93,10 @@ fun HomePage() {
                     }
 
                 },
-                onLongClick = { Toast.makeText(context, "LongClick", Toast.LENGTH_SHORT).show() }
+                onLongClick = {
+                    Toast.makeText(context, "LongClick", Toast.LENGTH_SHORT).show()
+
+                }
             )
             Spacer(modifier = Modifier.width(75.dp))
             SuperFloatingActionButton(

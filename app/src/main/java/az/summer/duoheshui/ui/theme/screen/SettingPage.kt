@@ -1,5 +1,8 @@
 package az.summer.duoheshui.ui.theme.screen
 
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,6 +23,8 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -27,6 +33,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -44,11 +51,15 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.content.ContextCompat.startActivity
+import az.summer.duoheshui.R
 import az.summer.duoheshui.module.CC
 import az.summer.duoheshui.module.MainSettingItem
 import az.summer.duoheshui.module.SettingItem
@@ -59,7 +70,11 @@ import az.summer.duoheshui.module.enMobile
 import az.summer.duoheshui.module.enSetDrinkDevice
 import az.summer.duoheshui.module.postmsg
 import az.summer.duoheshui.module.posttty
+import compose.icons.FontAwesomeIcons
 import compose.icons.WeatherIcons
+import compose.icons.fontawesomeicons.Brands
+import compose.icons.fontawesomeicons.brands.Github
+import compose.icons.fontawesomeicons.brands.Telegram
 import compose.icons.weathericons.Sunrise
 
 
@@ -115,7 +130,7 @@ fun SettingPage() {
                             Text(
                                 text = "Login",
                                 modifier = Modifier,
-                                style = MaterialTheme.typography.titleLarge.copy(fontSize = 32.sp),
+                                style = MaterialTheme.typography.titleLarge.copy(fontSize = 42.sp),
                                 color = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.height(40.dp))
@@ -244,19 +259,101 @@ fun SettingPage() {
                 color = MaterialTheme.colorScheme.primaryContainer,
                 onClick = { openAbout = true }
             ) {
-                Column(
-                    modifier = Modifier
-                        .size(400.dp, 400.dp)
-                        .background(MaterialTheme.colorScheme.primaryContainer),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                Surface(
+                    modifier = Modifier,
+                    shape = RoundedCornerShape(24.dp),
+                    onClick = { }
                 ) {
-                    Icon(
-                        imageVector = WeatherIcons.Sunrise,
-                        contentDescription = "about",
-                        modifier = Modifier.size(150.dp),
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Spacer(modifier = Modifier.height(28.dp))
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_pure),
+                            null,
+                            tint = Color.Yellow.copy(alpha = 0.8f)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Duoheshui",
+                            textAlign = TextAlign.Right,
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontSize = 36.sp
+                            ),
+                        )
+                        Spacer(modifier = Modifier.height(60.dp))
+                        Row() {
+                            IconButton(
+                                onClick = {
+                                    Toast.makeText(
+                                        context,
+                                        "Give me a star",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                },
+                                modifier = Modifier.size(80.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Favorite,
+                                    contentDescription = "like",
+                                    modifier = Modifier.size(48.dp),
+                                    tint = MaterialTheme.colorScheme.primary.copy(
+                                        alpha = 0.9f
+                                    )
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            IconButton(
+                                onClick = {
+                                    startActivity( context , Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse("https://github.com/aixiao0621/Duoheshui")
+                                    ),null
+                                    )
+                                },
+                                modifier = Modifier.size(80.dp)
+                            ) {
+                                Icon(
+                                    imageVector = FontAwesomeIcons.Brands.Github,
+                                    contentDescription = "github",
+                                    modifier = Modifier.size(48.dp),
+                                    tint = MaterialTheme.colorScheme.primary.copy(
+                                        alpha = 0.9f
+                                    )
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            IconButton(
+                                onClick = {
+                                    startActivity(context,
+                                        Intent(
+                                            Intent.ACTION_VIEW,
+                                            Uri.parse("https://t.me/mmnia1")
+                                        ),null
+                                    )
+                                },
+                                modifier = Modifier.size(80.dp)
+                            ) {
+                                Icon(
+                                    imageVector = FontAwesomeIcons.Brands.Telegram,
+                                    contentDescription = "telegram",
+                                    modifier = Modifier.size(48.dp),
+                                    tint = MaterialTheme.colorScheme.primary.copy(
+                                        alpha = 0.9f
+                                    )
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
                 }
+
             }
         }
         if (openDevices) Dialog(
@@ -278,7 +375,7 @@ fun SettingPage() {
                     Text(
                         text = "Devices",
                         modifier = Modifier,
-                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 32.sp),
+                        style = MaterialTheme.typography.titleLarge.copy(fontSize =36.sp),
                         color = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.height(30.dp))
@@ -385,22 +482,25 @@ fun SettingPage() {
             onClick = { openLanguages = true }
         )
 
-            DropdownMenu(
-                expanded = openLanguages,
-                offset = DpOffset(30.dp, (-15).dp),
-                onDismissRequest = {
-                    openLanguages = false
-                }
-            ) {
-                DropdownMenuItem(
-                    text = { Text("English") },
-                    onClick = { /* Handle edit! */ },)
-                DropdownMenuItem(
-                    text = { Text("简体中文") },
-                    onClick = { /* Handle edit! */ },)
-                DropdownMenuItem(
-                    text = { Text("繁體中文") },
-                    onClick = { /* Handle settings! */ },)
+        DropdownMenu(
+            expanded = openLanguages,
+            offset = DpOffset(30.dp, (-200).dp),
+            onDismissRequest = {
+                openLanguages = false
+            }
+        ) {
+            DropdownMenuItem(
+                text = { Text("English") },
+                onClick = { /* Handle edit! */ },
+            )
+            DropdownMenuItem(
+                text = { Text("简体中文") },
+                onClick = { /* Handle edit! */ },
+            )
+            DropdownMenuItem(
+                text = { Text("繁體中文") },
+                onClick = { /* Handle settings! */ },
+            )
         }
 
         SettingItem(

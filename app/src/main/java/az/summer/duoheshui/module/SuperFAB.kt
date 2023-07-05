@@ -122,7 +122,7 @@ fun SuperFloatingActionButton(
         Box(
             modifier = Modifier
                 .combinedClickable(
-                    onLongClick = onLongClick
+                    onLongClick =  onLongClick
                 ) { onClick() }
                 .height(56.dp),
             contentAlignment = Alignment.Center

@@ -73,4 +73,6 @@ dependencies {
     implementation 'com.github.md0092651:PlotWizard:0.0.2'
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation 'com.google.code.gson:gson:2.8.9'
+
+    implementation("br.com.devsrsouza.compose.icons:font-awesome:1.1.0")
 }
