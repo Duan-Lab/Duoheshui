@@ -2,32 +2,55 @@ package az.summer.duoheshui.ui.theme.screen
 
 import android.view.SoundEffectConstants
 import android.widget.Toast
+import androidx.compose.animation.Animatable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BackdropScaffold
+import androidx.compose.material.BackdropScaffoldState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Slider
+import androidx.compose.material.Surface
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.Popup
 import az.summer.duoheshui.R
 import az.summer.duoheshui.module.CC
 import az.summer.duoheshui.module.ShareUtil
 import az.summer.duoheshui.module.SuperFloatingActionButton
 import az.summer.duoheshui.module.UserPersistentStorage
+import az.summer.duoheshui.module.VerticalSlider
 import az.summer.duoheshui.module.drinkingPost
 import az.summer.duoheshui.module.drinkpostmsg
 import az.summer.duoheshui.module.enSetDrinkDevice
@@ -39,11 +62,15 @@ import compose.icons.WeatherIcons
 import compose.icons.weathericons.Thermometer
 import compose.icons.weathericons.ThermometerExterior
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomePage() {
 
     //for Toast
     val context = LocalContext.current
+
+    var showPopup by remember { mutableStateOf(false) }
+    var sliderValue by remember { mutableStateOf(0f) }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -60,6 +87,24 @@ fun HomePage() {
         Spacer(modifier = Modifier.height(75.dp))
         Row(modifier = Modifier) {
             SuperFloatingActionButton(
+                modifier = Modifier.pointerInput(Unit) {
+                    detectDragGestures(
+                        onDragStart = { // 长按时设置showPopup为true
+                            showPopup = true
+                            Modifier.blur(200.dp)
+                        },
+                        onDragEnd = { // 松开时设置showPopup为false
+                            Toast.makeText(context, "$sliderValue", Toast.LENGTH_SHORT).show()
+                            showPopup = false
+                        },
+                        onDrag = { change, dragAmount -> // 拖动时更新sliderValue的值
+                            change.consume()
+                            sliderValue =
+                                (sliderValue - dragAmount.y / 36f).coerceIn(0f, 30f)
+                        },
+
+                        )
+                },
                 icon = { Icon(imageVector = WeatherIcons.Thermometer, contentDescription = "hot") },
                 text = {
                     Text(
@@ -93,11 +138,8 @@ fun HomePage() {
                     }
 
                 },
-                onLongClick = {
-                    Toast.makeText(context, "LongClick", Toast.LENGTH_SHORT).show()
 
-                }
-            )
+                )
             Spacer(modifier = Modifier.width(75.dp))
             SuperFloatingActionButton(
                 icon = {
@@ -144,6 +186,50 @@ fun HomePage() {
                 },
 
                 )
+        }
+    }
+    if (showPopup) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Surface(
+                modifier = Modifier.size(270.dp, 380.dp),
+                shape = RoundedCornerShape(48.dp),
+                color = MaterialTheme.colorScheme.primaryContainer,
+                content = {
+                    Column(
+                        modifier = Modifier,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "${sliderValue.toInt()}s",
+                            modifier = Modifier,
+                            style = MaterialTheme.typography.titleLarge.copy(fontSize = 64.sp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(30.dp))
+                        Popup(
+                            alignment = Alignment.Center,
+                            onDismissRequest = { showPopup = false },
+                        ) {
+                            VerticalSlider(
+                                value = sliderValue,
+                                onValueChange = { sliderValue = it },
+                                min = 0,
+                                max = 30,
+                                onFinished = { value ->
+                                    Toast.makeText(context, "Wait...$value", Toast.LENGTH_SHORT)
+                                        .show()
+                                    showPopup = false
+
+                                },
+                                modifier = Modifier
+                                    .height(380.dp)
+                                    .blur(36.dp)
+                            )
+                        }
+                    }
+
+                })
         }
     }
 }

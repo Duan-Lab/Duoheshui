@@ -109,6 +109,7 @@ fun SuperFloatingActionButton(
 ) {
     FloatingActionButton(
         onClick = {},
+        modifier = modifier,
         shape = shape,
         containerColor = containerColor,
         contentColor = contentColor,
