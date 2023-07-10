@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -32,7 +31,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -59,7 +57,9 @@ import az.summer.duoheshui.ui.theme.screen.HomePage
 import az.summer.duoheshui.ui.theme.screen.ProfilePage
 import az.summer.duoheshui.ui.theme.screen.SettingPage
 import compose.icons.FontAwesomeIcons
+import compose.icons.fontawesomeicons.AllIcons
 import compose.icons.fontawesomeicons.Brands
+import compose.icons.fontawesomeicons.Regular
 import compose.icons.fontawesomeicons.brands.Github
 import compose.icons.fontawesomeicons.brands.Telegram
 
@@ -93,14 +93,7 @@ class MainActivity : ComponentActivity() {
                                     Surface(
                                         modifier = Modifier,
                                         shape = RoundedCornerShape(24.dp),
-                                        onClick = {
-                                            startActivity(
-                                                Intent(
-                                                    Intent.ACTION_VIEW,
-                                                    Uri.parse("https://github.com/aixiao0621/Duoheshui")
-                                                )
-                                            )
-                                        }
+                                        onClick = { }
                                     ) {
                                         Column(
                                             modifier = Modifier
@@ -138,7 +131,7 @@ class MainActivity : ComponentActivity() {
                                                     modifier = Modifier.size(80.dp)
                                                 ) {
                                                     Icon(
-                                                        imageVector = Icons.Rounded.Favorite,
+                                                        imageVector = FontAwesomeIcons.Regular.AllIcons[6],
                                                         contentDescription = "like",
                                                         modifier = Modifier.size(48.dp),
                                                         tint = MaterialTheme.colorScheme.primary.copy(
@@ -225,7 +218,6 @@ class MainActivity : ComponentActivity() {
                         },
                         bottomBar = {
 //                        AppNavigationBar(selectedId = currentScreen)
-
                             Navigation(currentScreenId = currentScreen.value) {
                                 currentScreen.value = it.id
                             }

@@ -1,27 +1,20 @@
 package az.summer.duoheshui.ui.theme.screen
 
-import android.view.SoundEffectConstants
+import android.os.Looper
 import android.widget.Toast
-import androidx.compose.animation.Animatable
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BackdropScaffold
-import androidx.compose.material.BackdropScaffoldState
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Slider
 import androidx.compose.material.Surface
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,18 +25,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import az.summer.duoheshui.R
 import az.summer.duoheshui.module.CC
@@ -61,8 +48,13 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import compose.icons.WeatherIcons
 import compose.icons.weathericons.Thermometer
 import compose.icons.weathericons.ThermometerExterior
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, DelicateCoroutinesApi::class)
 @Composable
 fun HomePage() {
 
@@ -91,19 +83,43 @@ fun HomePage() {
                     detectDragGestures(
                         onDragStart = { // 长按时设置showPopup为true
                             showPopup = true
-                            Modifier.blur(200.dp)
+                            Modifier
                         },
                         onDragEnd = { // 松开时设置showPopup为false
-                            Toast.makeText(context, "$sliderValue", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "${sliderValue.toInt()} seconds later",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             showPopup = false
+                            GlobalScope.launch(context = Dispatchers.IO) {
+                                delay(sliderValue.toLong() * 1000)
+                                encryptoHotDevice =
+                                    CC().encrypt(
+                                        enSetDrinkDevice(
+                                            ShareUtil.getString("hot", context).toString()
+                                        )
+                                    )
+                                drinkingPost(
+                                    "send_command/send",
+                                    drinkpostmsg(
+                                        "send",
+                                        encryptoHotDevice,
+                                        UserPersistentStorage(context).get()?.token.toString()
+                                    ),
+                                    context
+                                )
+                                Looper.prepare()
+                                Toast.makeText(context, "Di", Toast.LENGTH_SHORT).show()
+                                Looper.loop()
+                            }
                         },
                         onDrag = { change, dragAmount -> // 拖动时更新sliderValue的值
                             change.consume()
                             sliderValue =
-                                (sliderValue - dragAmount.y / 36f).coerceIn(0f, 30f)
+                                (sliderValue - dragAmount.y / 48f).coerceIn(0f, 30f)
                         },
-
-                        )
+                    )
                 },
                 icon = { Icon(imageVector = WeatherIcons.Thermometer, contentDescription = "hot") },
                 text = {
@@ -142,6 +158,51 @@ fun HomePage() {
                 )
             Spacer(modifier = Modifier.width(75.dp))
             SuperFloatingActionButton(
+                modifier = Modifier.pointerInput(Unit) {
+                    detectDragGestures(
+                        onDragStart = {
+                            showPopup = true
+                            Modifier
+                        },
+                        onDragEnd = {
+                            Toast.makeText(
+                                context,
+                                "${sliderValue.toInt()} seconds later",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            showPopup = false
+
+                            GlobalScope.launch(context = Dispatchers.IO) {
+                                delay(sliderValue.toLong() * 1000)
+                                encryptoColdDevice =
+                                    CC().encrypt(
+                                        enSetDrinkDevice(
+                                            ShareUtil.getString("cold", context).toString()
+                                        )
+                                    )
+                                drinkingPost(
+                                    "send_command/send",
+                                    drinkpostmsg(
+                                        "send",
+                                        encryptoColdDevice,
+                                        UserPersistentStorage(context).get()?.token.toString()
+                                    ),
+                                    context
+                                )
+                                Looper.prepare()
+                                Toast.makeText(context, "Di", Toast.LENGTH_SHORT).show()
+                                Looper.loop()
+                            }
+                            Thread.sleep(1000)
+
+                        },
+                        onDrag = { change, dragAmount ->
+                            change.consume()
+                            sliderValue =
+                                (sliderValue - dragAmount.y / 48f).coerceIn(0f, 30f)
+                        },
+                    )
+                },
                 icon = {
                     Icon(
                         imageVector = WeatherIcons.ThermometerExterior,
@@ -201,9 +262,9 @@ fun HomePage() {
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "${sliderValue.toInt()}s",
+                            text = "${sliderValue.toInt()}″",
                             modifier = Modifier,
-                            style = MaterialTheme.typography.titleLarge.copy(fontSize = 64.sp),
+                            style = MaterialTheme.typography.titleLarge.copy(fontSize = 86.sp),
                             color = MaterialTheme.colorScheme.primary
                         )
                         Spacer(modifier = Modifier.height(30.dp))

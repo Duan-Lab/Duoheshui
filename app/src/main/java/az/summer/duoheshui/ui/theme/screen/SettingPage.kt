@@ -23,15 +23,11 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -65,17 +61,19 @@ import az.summer.duoheshui.module.MainSettingItem
 import az.summer.duoheshui.module.SettingItem
 import az.summer.duoheshui.module.ShareUtil
 import az.summer.duoheshui.module.UserPersistentStorage
-import az.summer.duoheshui.module.enVcode
 import az.summer.duoheshui.module.enMobile
 import az.summer.duoheshui.module.enSetDrinkDevice
+import az.summer.duoheshui.module.enVcode
 import az.summer.duoheshui.module.postmsg
 import az.summer.duoheshui.module.posttty
 import compose.icons.FontAwesomeIcons
-import compose.icons.WeatherIcons
+import compose.icons.fontawesomeicons.AllIcons
 import compose.icons.fontawesomeicons.Brands
+import compose.icons.fontawesomeicons.Regular
+import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.brands.Github
 import compose.icons.fontawesomeicons.brands.Telegram
-import compose.icons.weathericons.Sunrise
+import compose.icons.fontawesomeicons.solid.Wallet
 
 
 var phoneNum = mutableStateOf(TextFieldValue(""))
@@ -300,7 +298,7 @@ fun SettingPage() {
                                 modifier = Modifier.size(80.dp)
                             ) {
                                 Icon(
-                                    imageVector = Icons.Rounded.Favorite,
+                                    imageVector = FontAwesomeIcons.Regular.AllIcons[6],
                                     contentDescription = "like",
                                     modifier = Modifier.size(48.dp),
                                     tint = MaterialTheme.colorScheme.primary.copy(
@@ -435,8 +433,8 @@ fun SettingPage() {
             modifier = Modifier,
             enable = false,
             selected = true,
-            title = "Setting",
-            icon = Icons.Outlined.Settings
+            title = if (UserPersistentStorage(context).get()?.token == null) "Setting" else UserPersistentStorage(context).get()?.wallet?.balance.toString() + " CNY",
+            icon = if (UserPersistentStorage(context).get()?.token == null) Icons.Outlined.Settings else FontAwesomeIcons.Solid.Wallet
         )
         Spacer(modifier = Modifier.height(25.dp))
 
@@ -466,7 +464,7 @@ fun SettingPage() {
             modifier = Modifier,
             true,
             false,
-            title = "Color&Style",
+            title = "Color & Style",
             icon = Icons.Outlined.Edit,
             desc = "What could we do?",
             onClick = { }
