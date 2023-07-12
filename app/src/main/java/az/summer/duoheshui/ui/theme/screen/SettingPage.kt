@@ -3,6 +3,7 @@ package az.summer.duoheshui.ui.theme.screen
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,6 +44,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -66,6 +69,11 @@ import az.summer.duoheshui.module.enSetDrinkDevice
 import az.summer.duoheshui.module.enVcode
 import az.summer.duoheshui.module.postmsg
 import az.summer.duoheshui.module.posttty
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.rememberPermissionState
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanOptions
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.AllIcons
 import compose.icons.fontawesomeicons.Brands
@@ -73,8 +81,8 @@ import compose.icons.fontawesomeicons.Regular
 import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.brands.Github
 import compose.icons.fontawesomeicons.brands.Telegram
+import compose.icons.fontawesomeicons.solid.Camera
 import compose.icons.fontawesomeicons.solid.Wallet
-
 
 var phoneNum = mutableStateOf(TextFieldValue(""))
 var encryptomobile = CC().encrypt(enMobile(phoneNum.component1().text))
@@ -88,7 +96,7 @@ var encryptoHotDevice = CC().encrypt(enSetDrinkDevice(hotDevice.component1().tex
 var coldDevice = mutableStateOf(TextFieldValue(""))
 var encryptoColdDevice = CC().encrypt(enSetDrinkDevice(coldDevice.component1().text))
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun SettingPage() {
 
@@ -101,6 +109,32 @@ fun SettingPage() {
     var verifyButtonState by remember { mutableStateOf(true) }
     val focusRequester = remember { FocusRequester() }
     var openLanguages by remember { mutableStateOf(false) }
+
+    @OptIn(ExperimentalPermissionsApi::class)
+    val cameraPermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
+
+    val scanLauncherhotDevice = rememberLauncherForActivityResult(
+        contract = ScanContract(),
+        onResult = { result ->
+            run {
+                if (result.contents == null) {
+                    println("null")
+                } else {
+                    hotDevice.value = TextFieldValue(text = result.contents)
+                }
+            }
+        }
+    )
+    val scanLaunchercoldDevice = rememberLauncherForActivityResult(
+        contract = ScanContract(),
+        onResult = { result -> run {
+            if (result.contents == null) {
+                println("null")
+            } else {
+                coldDevice.value = TextFieldValue(text = result.contents)
+            }
+        } }
+    )
 
     Column(
         modifier = Modifier
@@ -148,7 +182,7 @@ fun SettingPage() {
 
                             Row(
                                 modifier = Modifier,
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = CenterVertically
                             ) {
                                 Box(modifier = Modifier.width(160.dp)) {
                                     TextField(
@@ -191,7 +225,7 @@ fun SettingPage() {
                                 }
 
                             }
-                            Spacer(modifier = Modifier.height(20.dp))
+                            Spacer(modifier = Modifier.height(30.dp))
                             ElevatedButton(onClick = {
                                 posttty(
                                     "loginByCode",
@@ -309,10 +343,11 @@ fun SettingPage() {
                             Spacer(modifier = Modifier.width(16.dp))
                             IconButton(
                                 onClick = {
-                                    startActivity( context , Intent(
-                                        Intent.ACTION_VIEW,
-                                        Uri.parse("https://github.com/aixiao0621/Duoheshui")
-                                    ),null
+                                    startActivity(
+                                        context, Intent(
+                                            Intent.ACTION_VIEW,
+                                            Uri.parse("https://github.com/aixiao0621/Duoheshui")
+                                        ), null
                                     )
                                 },
                                 modifier = Modifier.size(80.dp)
@@ -329,11 +364,12 @@ fun SettingPage() {
                             Spacer(modifier = Modifier.width(16.dp))
                             IconButton(
                                 onClick = {
-                                    startActivity(context,
+                                    startActivity(
+                                        context,
                                         Intent(
                                             Intent.ACTION_VIEW,
                                             Uri.parse("https://t.me/mmnia1")
-                                        ),null
+                                        ), null
                                     )
                                 },
                                 modifier = Modifier.size(80.dp)
@@ -373,55 +409,101 @@ fun SettingPage() {
                     Text(
                         text = "Devices",
                         modifier = Modifier,
-                        style = MaterialTheme.typography.titleLarge.copy(fontSize =36.sp),
+                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 36.sp),
                         color = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.height(30.dp))
-                    OutlinedTextField(
-                        value = hotDevice.value,
-                        label = {
-                            Text(
-                                text =
-                                if (ShareUtil.getString("hot", context).toString()
-                                        .isNullOrEmpty()
-                                ) "Hot Water"
-                                else if (ShareUtil.getString("hot", context)
-                                        .toString().length < 9
-                                ) "Hot Water" else ShareUtil.getString("hot", context).toString()
-                            )
-                        },
-                        onValueChange = {
-                            hotDevice.value = it
+                    Row(modifier = Modifier) {
+                        TextField(
+                            value = hotDevice.value,
+                            label = {
+                                Text(text = "Hot Water")
+                            },
+                            onValueChange = {
+                                hotDevice.value = it
 //                            encryptoHotDevice =
 //                                CC().encrypt(enSetDrinkDevice(hotDevice.component1().text))
-                            ShareUtil.putString("hot", hotDevice.value.text, context)
-                        },
-                        modifier = Modifier.width(280.dp),
-                        singleLine = true,
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-                    OutlinedTextField(
-                        value = coldDevice.value,
-                        label = {
-                            Text(
-                                text =
-                                if (ShareUtil.getString("cold", context).toString()
-                                        .isNullOrEmpty()
-                                ) "Cold Water"
-                                else if (ShareUtil.getString("cold", context)
-                                        .toString().length < 10
-                                ) "Cold Water" else ShareUtil.getString("cold", context).toString()
-                            )
-                        },
-                        onValueChange = {
-                            coldDevice.value = it
-                            ShareUtil.putString("cold", coldDevice.value.text, context)
-                        },
-                        modifier = Modifier.width(280.dp),
-                        singleLine = true,
-
+                                ShareUtil.putString("hot", hotDevice.value.text, context)
+                            },
+                            modifier = Modifier.width(230.dp),
+                            singleLine = true,
+                            colors = TextFieldDefaults.outlinedTextFieldColors()
                         )
+                        IconButton(
+                            onClick = {
+                                cameraPermissionState.launchPermissionRequest()
+                                when (cameraPermissionState.status) {
+                                    PermissionStatus.Granted -> {
+                                        scanLauncherhotDevice.launch(ScanOptions())
+                                    }
+                                    is PermissionStatus.Denied -> {
+                                        Toast.makeText(
+                                            context,
+                                            "Please grant the camera permission",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                            }, modifier = Modifier.size(48.dp)
+                        ) {
+                            Icon(
+                                imageVector = FontAwesomeIcons.Solid.Camera,
+                                contentDescription = "camera",
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .padding(top = 18.dp)
+                            )
+                        }
+                    }
                     Spacer(modifier = Modifier.height(20.dp))
+                    Row(modifier = Modifier){
+                        TextField(
+                            value = coldDevice.value,
+                            label = {
+                                Text(text = "Cold Water")
+                            },
+                            onValueChange = {
+                                coldDevice.value = it
+                                ShareUtil.putString("cold", coldDevice.value.text, context)
+                            },
+                            modifier = Modifier.width(230.dp),
+                            singleLine = true,
+                            colors = TextFieldDefaults.outlinedTextFieldColors()
+                        )
+                        IconButton(
+                            onClick = {
+                                cameraPermissionState.launchPermissionRequest()
+                                when (cameraPermissionState.status) {
+                                    PermissionStatus.Granted -> {
+                                        val options = ScanOptions()
+                                        options.setOrientationLocked(true)
+                                        options.runCatching {  }
+                                        options.setDesiredBarcodeFormats(ScanOptions.ONE_D_CODE_TYPES);
+                                        options.setBeepEnabled(false);
+                                        options.setBarcodeImageEnabled(true);
+
+                                        scanLaunchercoldDevice.launch(ScanOptions())
+                                    }
+                                    is PermissionStatus.Denied -> {
+                                        Toast.makeText(
+                                            context,
+                                            "Please grant camera permission",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                            }, modifier = Modifier.size(48.dp)
+                        ) {
+                            Icon(
+                                imageVector = FontAwesomeIcons.Solid.Camera,
+                                contentDescription = "camera",
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .padding(top = 18.dp)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(35.dp))
                     ElevatedButton(onClick = { openDevices = false }) {
                         Text(text = "Save")
                     }
@@ -433,7 +515,9 @@ fun SettingPage() {
             modifier = Modifier,
             enable = false,
             selected = true,
-            title = if (UserPersistentStorage(context).get()?.token == null) "Setting" else UserPersistentStorage(context).get()?.wallet?.balance.toString() + " CNY",
+            title = if (UserPersistentStorage(context).get()?.token == null) "Setting" else UserPersistentStorage(
+                context
+            ).get()?.wallet?.balance.toString() + " CNY",
             icon = if (UserPersistentStorage(context).get()?.token == null) Icons.Outlined.Settings else FontAwesomeIcons.Solid.Wallet
         )
         Spacer(modifier = Modifier.height(25.dp))
