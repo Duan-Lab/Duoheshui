@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,9 +49,9 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
@@ -69,6 +70,7 @@ import az.summer.duoheshui.module.enSetDrinkDevice
 import az.summer.duoheshui.module.enVcode
 import az.summer.duoheshui.module.postmsg
 import az.summer.duoheshui.module.posttty
+import az.summer.duoheshui.ui.theme.SansFamily
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
@@ -127,13 +129,15 @@ fun SettingPage() {
     )
     val scanLaunchercoldDevice = rememberLauncherForActivityResult(
         contract = ScanContract(),
-        onResult = { result -> run {
-            if (result.contents == null) {
-                println("null")
-            } else {
-                coldDevice.value = TextFieldValue(text = result.contents)
+        onResult = { result ->
+            run {
+                if (result.contents == null) {
+                    println("null")
+                } else {
+                    coldDevice.value = TextFieldValue(text = result.contents)
+                }
             }
-        } }
+        }
     )
 
     Column(
@@ -163,12 +167,20 @@ fun SettingPage() {
                                 text = "Login",
                                 modifier = Modifier,
                                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 42.sp),
-                                color = MaterialTheme.colorScheme.primary
+                                color = MaterialTheme.colorScheme.primary,
+                                fontFamily = SansFamily,
+                                fontWeight = FontWeight.Medium
                             )
                             Spacer(modifier = Modifier.height(40.dp))
                             OutlinedTextField(
                                 value = phoneNum.value,
-                                label = { Text(text = "Phone Number") },
+                                label = {
+                                    Text(
+                                        text = "Phone Number",
+                                        fontFamily = SansFamily,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                },
                                 onValueChange = {
                                     phoneNum.value = it
                                     encryptomobile =
@@ -187,7 +199,13 @@ fun SettingPage() {
                                 Box(modifier = Modifier.width(160.dp)) {
                                     TextField(
                                         value = verifyCode.value,
-                                        label = { Text(text = "Verify Code") },
+                                        label = {
+                                            Text(
+                                                text = "Verify Code",
+                                                fontFamily = SansFamily,
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                        },
                                         onValueChange = {
                                             verifyCode.value = it
                                             encryptocode = CC().encrypt(
@@ -220,7 +238,11 @@ fun SettingPage() {
                                         shape = RoundedCornerShape(16.dp)
                                     )
                                     {
-                                        Text(text = "Verify")
+                                        Text(
+                                            text = "Verify",
+                                            fontFamily = SansFamily,
+                                            fontWeight = FontWeight.Medium
+                                        )
                                     }
                                 }
 
@@ -235,7 +257,11 @@ fun SettingPage() {
                                     openSignIn = false
                                 }
                             }) {
-                                Text(text = "Let's Go")
+                                Text(
+                                    text = "Let's Go",
+                                    fontFamily = SansFamily,
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
 
                         }
@@ -272,7 +298,9 @@ fun SettingPage() {
                                 Text(
                                     text = it,
                                     modifier = Modifier,
-                                    fontSize = 30.sp
+                                    fontSize = 30.sp,
+                                    fontFamily = SansFamily,
+                                    fontWeight = FontWeight.Medium
                                 )
                             }
 
@@ -303,21 +331,17 @@ fun SettingPage() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Spacer(modifier = Modifier.height(28.dp))
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_pure),
-                            null,
-                            tint = Color.Yellow.copy(alpha = 0.8f)
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Image(painter = painterResource(R.drawable.logo), contentDescription = "")
                         Text(
                             text = "Duoheshui",
                             textAlign = TextAlign.Right,
                             modifier = Modifier.align(Alignment.CenterHorizontally),
                             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
                             style = MaterialTheme.typography.titleLarge.copy(
-                                fontSize = 36.sp
+                                fontSize = 38.sp
                             ),
+                            fontFamily = SansFamily,
+                            fontWeight = FontWeight.Medium
                         )
                         Spacer(modifier = Modifier.height(60.dp))
                         Row() {
@@ -410,14 +434,18 @@ fun SettingPage() {
                         text = "Devices",
                         modifier = Modifier,
                         style = MaterialTheme.typography.titleLarge.copy(fontSize = 36.sp),
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
+                        fontFamily = SansFamily,
+                        fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(30.dp))
                     Row(modifier = Modifier) {
                         TextField(
                             value = hotDevice.value,
                             label = {
-                                Text(text = "Hot Water")
+                                Text(text = "Hot Water",
+                                     fontFamily = SansFamily,
+                                     fontWeight = FontWeight.Medium)
                             },
                             onValueChange = {
                                 hotDevice.value = it
@@ -456,11 +484,13 @@ fun SettingPage() {
                         }
                     }
                     Spacer(modifier = Modifier.height(20.dp))
-                    Row(modifier = Modifier){
+                    Row(modifier = Modifier) {
                         TextField(
                             value = coldDevice.value,
                             label = {
-                                Text(text = "Cold Water")
+                                Text(text = "Cold Water",
+                                     fontFamily = SansFamily,
+                                     fontWeight = FontWeight.Medium)
                             },
                             onValueChange = {
                                 coldDevice.value = it
@@ -477,9 +507,9 @@ fun SettingPage() {
                                     PermissionStatus.Granted -> {
                                         val options = ScanOptions()
                                         options.setOrientationLocked(true)
-                                        options.runCatching {  }
-                                        options.setDesiredBarcodeFormats(ScanOptions.ONE_D_CODE_TYPES);
-                                        options.setBeepEnabled(false);
+                                        options.runCatching { }
+                                        options.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
+                                        options.setBeepEnabled(true);
                                         options.setBarcodeImageEnabled(true);
 
                                         scanLaunchercoldDevice.launch(ScanOptions())
@@ -505,7 +535,11 @@ fun SettingPage() {
                     }
                     Spacer(modifier = Modifier.height(35.dp))
                     ElevatedButton(onClick = { openDevices = false }) {
-                        Text(text = "Save")
+                        Text(
+                            text = "Save",
+                            fontFamily = SansFamily,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
 
                 }

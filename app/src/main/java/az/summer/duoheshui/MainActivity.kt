@@ -40,22 +40,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import az.summer.duoheshui.ui.theme.DuoheshuiTheme
+import az.summer.duoheshui.ui.theme.SansFamily
 import az.summer.duoheshui.ui.theme.navigation.Navigation
 import az.summer.duoheshui.ui.theme.navigation.Screen
 import az.summer.duoheshui.ui.theme.screen.HomePage
 import az.summer.duoheshui.ui.theme.screen.ProfilePage
 import az.summer.duoheshui.ui.theme.screen.SettingPage
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.AllIcons
 import compose.icons.fontawesomeicons.Brands
@@ -102,13 +106,13 @@ class MainActivity : ComponentActivity() {
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             verticalArrangement = Arrangement.Center
                                         ) {
-                                            Spacer(modifier = Modifier.height(28.dp))
-                                            Icon(
-                                                painter = painterResource(id = R.drawable.ic_pure),
-                                                null,
-                                                tint = Color.Yellow.copy(alpha = 0.99f)
-                                            )
                                             Spacer(modifier = Modifier.height(8.dp))
+                                            Box(
+                                                modifier = Modifier.size(240.dp).fillMaxSize(),
+                                                propagateMinConstraints = false
+                                            ) {
+                                                Stars()
+                                            }
                                             Text(
                                                 text = "Duoheshui",
                                                 textAlign = TextAlign.Right,
@@ -117,6 +121,8 @@ class MainActivity : ComponentActivity() {
                                                 style = MaterialTheme.typography.titleLarge.copy(
                                                     fontSize = 36.sp
                                                 ),
+                                                fontFamily = SansFamily,
+                                                fontWeight = FontWeight.Medium
                                             )
                                             Spacer(modifier = Modifier.height(60.dp))
                                             Row() {
@@ -198,7 +204,8 @@ class MainActivity : ComponentActivity() {
                                         maxLines = 1,
                                         style = TextStyle(
                                             fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                                            fontWeight = FontWeight.Normal
+                                            fontFamily = SansFamily,
+                                            fontWeight = FontWeight.Medium
                                         )
                                     )
                                 },
@@ -236,6 +243,17 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun Stars() {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.star))
+    val progress by animateLottieCompositionAsState(composition)
+    LottieAnimation(
+        composition = composition,
+        progress = { progress },
+    )
 }
 
 @Composable

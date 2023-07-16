@@ -21,8 +21,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import az.summer.duoheshui.ui.theme.SansFamily
 
 @Composable
 fun SettingItem(
@@ -70,6 +72,8 @@ fun SettingItem(
                     maxLines = if (desc == null) 2 else 1,
                     style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
                     color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                    fontFamily = SansFamily,
+                    fontWeight = FontWeight.Medium
                 )
                 desc?.let {
                     Text(
@@ -78,6 +82,8 @@ fun SettingItem(
                         else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                         maxLines = 1,
                         style = MaterialTheme.typography.bodyMedium,
+                        fontFamily = SansFamily,
+                        fontWeight = FontWeight.Light
                     )
                 }
             }
@@ -134,6 +140,8 @@ fun MainSettingItem(
                     maxLines = if (desc == null) 2 else 1,
                     style = MaterialTheme.typography.titleLarge.copy(fontSize = 32.sp),
                     color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                    fontFamily = SansFamily,
+                    fontWeight = FontWeight.Medium
                 )
                 desc?.let {
                     Text(
@@ -142,6 +150,8 @@ fun MainSettingItem(
                         else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                         maxLines = 1,
                         style = MaterialTheme.typography.bodyMedium,
+                        fontFamily = SansFamily,
+                        fontWeight = FontWeight.Light
                     )
                 }
             }

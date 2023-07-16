@@ -27,9 +27,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import az.summer.duoheshui.module.Char
+import az.summer.duoheshui.ui.theme.SansFamily
 
 @Composable
 fun ProfilePage (){
@@ -63,7 +65,9 @@ fun ProfilePage (){
                 Text(
                     text = "+100",
                     color = MaterialTheme.colorScheme.primary,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    fontFamily = SansFamily,
+                    fontWeight = FontWeight.Medium
                 )
             }
             Spacer(modifier = Modifier.width(45.dp))
@@ -76,7 +80,9 @@ fun ProfilePage (){
                 Text(
                     text = "+300",
                     color = MaterialTheme.colorScheme.primary,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    fontFamily = SansFamily,
+                    fontWeight = FontWeight.Medium
                 )
             }
         }
@@ -121,8 +127,10 @@ fun ClickAdd(
                     text = char.toString(),
                     style = style,
                     softWrap = false,
-                    fontSize = 60.sp,
-                    color = color
+                    fontSize = 68.sp,
+                    color = color,
+                    fontFamily = SansFamily,
+                    fontWeight = FontWeight.Medium
                 )
 
             }

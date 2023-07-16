@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,6 +42,7 @@ import az.summer.duoheshui.module.VerticalSlider
 import az.summer.duoheshui.module.drinkingPost
 import az.summer.duoheshui.module.drinkpostmsg
 import az.summer.duoheshui.module.enSetDrinkDevice
+import az.summer.duoheshui.ui.theme.SansFamily
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -125,7 +127,9 @@ fun HomePage() {
                 text = {
                     Text(
                         " HOT ",
-                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp)
+                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp),
+                        fontFamily = SansFamily,
+                        fontWeight = FontWeight.Medium
                     )
                 },
                 onClick = {
@@ -210,7 +214,12 @@ fun HomePage() {
                     )
                 },
                 text = {
-                    Text("COLD", style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp))
+                    Text(
+                        "COLD",
+                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp),
+                        fontFamily = SansFamily,
+                        fontWeight = FontWeight.Medium
+                    )
                 },
                 onClick = {
                     if (UserPersistentStorage(context).get()?.token == null) Toast.makeText(
@@ -265,7 +274,9 @@ fun HomePage() {
                             text = "${sliderValue.toInt()}″",
                             modifier = Modifier,
                             style = MaterialTheme.typography.titleLarge.copy(fontSize = 86.sp),
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
+                            fontFamily = SansFamily,
+                            fontWeight = FontWeight.Medium
                         )
                         Spacer(modifier = Modifier.height(30.dp))
                         Popup(

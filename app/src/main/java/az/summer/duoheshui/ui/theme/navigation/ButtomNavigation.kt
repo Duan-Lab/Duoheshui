@@ -22,9 +22,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import az.summer.duoheshui.ui.theme.SansFamily
 
 @Composable
 fun Navigation(
@@ -93,7 +95,9 @@ fun NavItem(
             Text(
                 text = item.title,
                 modifier = Modifier.padding(start = 4.dp),
-                color = contentColor
+                color = contentColor,
+                fontFamily = SansFamily,
+                fontWeight = FontWeight.Medium
             )
         }
     }
