@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Build
@@ -52,6 +53,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
@@ -77,13 +79,12 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 import compose.icons.FontAwesomeIcons
-import compose.icons.fontawesomeicons.AllIcons
 import compose.icons.fontawesomeicons.Brands
-import compose.icons.fontawesomeicons.Regular
 import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.brands.Github
 import compose.icons.fontawesomeicons.brands.Telegram
 import compose.icons.fontawesomeicons.solid.Camera
+import compose.icons.fontawesomeicons.solid.Globe
 import compose.icons.fontawesomeicons.solid.Wallet
 
 var phoneNum = mutableStateOf(TextFieldValue(""))
@@ -188,7 +189,8 @@ fun SettingPage() {
 
                                 },
                                 modifier = Modifier.width(280.dp),
-                                singleLine = true
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                             )
                             Spacer(modifier = Modifier.height(20.dp))
 
@@ -218,6 +220,7 @@ fun SettingPage() {
                                         modifier = Modifier.focusRequester(focusRequester),
                                         singleLine = true,
                                         colors = TextFieldDefaults.outlinedTextFieldColors(),
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                                     )
                                 }
                                 Spacer(modifier = Modifier.width(20.dp))
@@ -356,7 +359,7 @@ fun SettingPage() {
                                 modifier = Modifier.size(80.dp)
                             ) {
                                 Icon(
-                                    imageVector = FontAwesomeIcons.Regular.AllIcons[6],
+                                    imageVector = FontAwesomeIcons.Solid.Globe,
                                     contentDescription = "like",
                                     modifier = Modifier.size(48.dp),
                                     tint = MaterialTheme.colorScheme.primary.copy(

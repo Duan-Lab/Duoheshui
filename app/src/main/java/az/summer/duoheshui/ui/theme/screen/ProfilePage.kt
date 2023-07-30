@@ -13,8 +13,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +37,7 @@ import az.summer.duoheshui.module.Char
 import az.summer.duoheshui.ui.theme.SansFamily
 
 @Composable
-fun ProfilePage (){
+fun ProfilePage() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -62,8 +65,13 @@ fun ProfilePage (){
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
             ) {
+                Icon(
+                    imageVector = Icons.TwoTone.Add,
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.primary
+                )
                 Text(
-                    text = "+100",
+                    text = " 100",
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 16.sp,
                     fontFamily = SansFamily,
@@ -77,8 +85,13 @@ fun ProfilePage (){
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
             ) {
+                Icon(
+                    imageVector = Icons.TwoTone.Add,
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.primary
+                )
                 Text(
-                    text = "+300",
+                    text = " 300",
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 16.sp,
                     fontFamily = SansFamily,
@@ -99,7 +112,7 @@ fun ClickAdd(
     count: Int,
     modifier: Modifier = Modifier,
     style: TextStyle = MaterialTheme.typography.titleLarge,
-    color: Color = MaterialTheme.colorScheme.primary
+    color: Color = MaterialTheme.colorScheme.primary,
 ) {
     var oldCount by remember {
         mutableStateOf(count)
@@ -118,10 +131,11 @@ fun ClickAdd(
             } else {
                 countString[i]
             }
-            AnimatedContent(targetState = char,
+            AnimatedContent(
+                targetState = char,
                 transitionSpec = {
                     slideInVertically { it } with slideOutVertically { -it }
-                }
+                }, label = ""
             ) { char ->
                 Text(
                     text = char.toString(),

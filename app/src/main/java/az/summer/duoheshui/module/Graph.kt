@@ -32,9 +32,9 @@ fun Char() {
         )
     }
 }
-
+var day = 1.2F
 fun MockRangeList() = listOf(
-    ChartEntry.RangeBar(0F, 0.5F, "27"),
+    ChartEntry.RangeBar(0F, 0.5F),
     ChartEntry.RangeBar(0F, 0.7F),
     ChartEntry.RangeBar(0F, 2F),
     ChartEntry.RangeBar(0F, 1.6F),
@@ -42,13 +42,5 @@ fun MockRangeList() = listOf(
     ChartEntry.RangeBar(0F, 1F),
     ChartEntry.RangeBar(0F, 1.8F),
     ChartEntry.RangeBar(0F, 1F),
-    ChartEntry.RangeBar(0F, 0.7F),
+    ChartEntry.RangeBar(0F, day),
 )
-
-sealed class WhatChart {
-    data class RangeBar(
-        val minimum: Float = 0F,
-        val maximum: Float = 0F,
-        val label: String = ""
-    ) : WhatChart()
-}
