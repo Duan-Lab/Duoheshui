@@ -21,12 +21,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Add
+import androidx.compose.material.icons.twotone.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
@@ -49,12 +52,8 @@ import com.charts.plotwizard.chartstyle.ChartStyle
 import com.charts.plotwizard.ui.Chart
 import com.charts.plotwizard.ui.theme.Pink40
 import com.charts.plotwizard.ui.theme.Purple80
+import kotlinx.coroutines.delay
 import org.json.JSONArray
-
-@Composable
-fun profileDef(){
-
-}
 
 @Composable
 fun ProfilePage() {
@@ -62,7 +61,7 @@ fun ProfilePage() {
 
     val flag = sp.getBoolean("arr_flag", false)
     if (!flag) {
-        val list = doubleArrayOf(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        val list = doubleArrayOf(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         sp.edit {
             putString("water_array", JSONArray(list).toString())
             putBoolean("arr_flag", true)
@@ -78,21 +77,18 @@ fun ProfilePage() {
     }
 
     var temp = sp.getInt("today", 0)
-    var dayWaterValue by remember { mutableStateOf(temp) }
 
-    val context = LocalContext.current
+    LocalContext.current
 
     var today = sp.getInt("today", 0)!!.toFloat() / 1000
 
     val List = sp.getString("water_array", null)
     var savedList = DoubleArray(JSONArray(List).length()) { JSONArray(List).getDouble(it) }
 
-//    val sp: SharedPreferences = LocalContext.current.getSharedPreferences("my_data", MODE_PRIVATE)
-//    val List = sp.getString("water_array", null)
-//    var savedList = DoubleArray(JSONArray(List).length()) { JSONArray(List).getDouble(it) }
-    repeat(numberOfDays.toInt()) {
-        addDayData(sp.getInt("today", 0)!!.toFloat() / 1000, savedList)
-        Log.d("aaa", "1")
+    Log.d("btwea", numberOfDays.toString())
+    repeat(numberOfDays) {
+        addDayData(today, savedList, sp)
+        Log.d("today", numberOfDays.toString())
     }
     numberOfDays = 0
 
@@ -104,7 +100,11 @@ fun ProfilePage() {
         verticalArrangement = Arrangement.SpaceAround
     ) {
         var count by remember {
-            mutableStateOf(dayWaterValue)
+            mutableStateOf(temp)
+        }
+        LaunchedEffect(temp) {
+            delay(1000)
+            count = sp.getInt("today", 0)
         }
         ClickAdd(
             count = count,
@@ -158,7 +158,7 @@ fun ProfilePage() {
             }
         }
         Column(modifier = Modifier) {
-            Char(savedList, today)
+            Char(savedList)
         }
     }
 }
@@ -209,9 +209,9 @@ fun ClickAdd(
         }
     }
 }
+
 @Composable
-fun addDayData(num: Float, savedList: DoubleArray) {
-    val sp: SharedPreferences = LocalContext.current.getSharedPreferences("my_data", MODE_PRIVATE)
+fun addDayData(num: Float, savedList: DoubleArray, sp: SharedPreferences) {
     for (i in savedList.size - 1 downTo 1) {
         savedList[i] = savedList[i - 1]
     }
@@ -220,10 +220,10 @@ fun addDayData(num: Float, savedList: DoubleArray) {
     sp.edit { putInt("today", 0) }
 }
 
-
 @Composable
-fun Char(savedList: DoubleArray, today: Float) {
+fun Char(savedList: DoubleArray) {
     fun MockRangeList() = listOf(
+        ChartEntry.RangeBar(0F, savedList[8].toFloat()),
         ChartEntry.RangeBar(0F, savedList[7].toFloat()),
         ChartEntry.RangeBar(0F, savedList[6].toFloat()),
         ChartEntry.RangeBar(0F, savedList[5].toFloat()),
@@ -232,14 +232,17 @@ fun Char(savedList: DoubleArray, today: Float) {
         ChartEntry.RangeBar(0F, savedList[2].toFloat()),
         ChartEntry.RangeBar(0F, savedList[1].toFloat()),
         ChartEntry.RangeBar(0F, savedList[0].toFloat()),
-        ChartEntry.RangeBar(0F, today),
     )
-
-//    Button(onClick = {
-////        addDayData(sp.getInt("today", 0)!!.toFloat() / 1000, savedList, sp)
-//    }) {
-//        Icon(imageVector = Icons.TwoTone.AccountCircle, contentDescription = "")
-//    }
+    Row {
+        Button(onClick = {
+        }) {
+            Icon(imageVector = Icons.TwoTone.DateRange, contentDescription = "")
+            Text(
+                text = "              ",
+                textAlign = TextAlign.End,
+            )
+        }
+    }
 
     Box(
         modifier = Modifier

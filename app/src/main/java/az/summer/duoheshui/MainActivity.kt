@@ -58,7 +58,6 @@ import az.summer.duoheshui.ui.theme.navigation.Screen
 import az.summer.duoheshui.ui.theme.screen.HomePage
 import az.summer.duoheshui.ui.theme.screen.ProfilePage
 import az.summer.duoheshui.ui.theme.screen.SettingPage
-import az.summer.duoheshui.ui.theme.screen.profileDef
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -74,13 +73,15 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-var numberOfDays: Long = 0
+var numberOfDays: Int = 0
+
 class MainActivity : ComponentActivity() {
     lateinit var prefs: SharedPreferences
     override fun onDestroy() {
         super.onDestroy()
         val last = LocalDate.now()
         prefs.edit().putString("last_exit", last.toString()).apply()
+        Log.d("last", last.toString())
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -89,11 +90,14 @@ class MainActivity : ComponentActivity() {
         val currentScreen = mutableStateOf(Screen.Home.id)
 
         prefs = getSharedPreferences("cal", MODE_PRIVATE)
-        val lastExit = prefs.getString("last_exit", "2023-01-01")
+        val lastExit = prefs.getString("last_exit", "2023-06-01")
         try {
             val now = LocalDate.now()
-            val diffNumber = Duration.between(LocalDate.parse(lastExit, DateTimeFormatter.ISO_DATE).atStartOfDay(),now.atStartOfDay()).toDays()
-            numberOfDays = diffNumber
+            val diffNumber = Duration.between(
+                LocalDate.parse(lastExit, DateTimeFormatter.ISO_DATE).atStartOfDay(),
+                now.atStartOfDay()
+            ).toDays()
+            numberOfDays = diffNumber.toInt()
             Log.d("diff", numberOfDays.toString())
         } catch (e: ParseException) {
             // 处理异常

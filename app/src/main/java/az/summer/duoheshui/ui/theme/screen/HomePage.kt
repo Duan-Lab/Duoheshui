@@ -45,6 +45,7 @@ import az.summer.duoheshui.module.VerticalSlider
 import az.summer.duoheshui.module.drinkingPost
 import az.summer.duoheshui.module.drinkpostmsg
 import az.summer.duoheshui.module.enSetDrinkDevice
+import az.summer.duoheshui.numberOfDays
 import az.summer.duoheshui.ui.theme.SansFamily
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -60,30 +61,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 
-@OptIn(ExperimentalMaterialApi::class, DelicateCoroutinesApi::class)
+@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun HomePage() {
-//    val sp: SharedPreferences = LocalContext.current.getSharedPreferences("my_data",
-//        Context.MODE_PRIVATE
-//    )
-//
-//    val flag = sp.getBoolean("arr_flag", false)
-//    if (!flag) {
-//        val list = doubleArrayOf(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-//        sp.edit {
-//            putString("water_array", JSONArray(list).toString())
-//            putBoolean("arr_flag", true)
-//        }
-//    }
-//
-//    val dayflag = sp.getBoolean("today_flag", false)
-//    if (!dayflag) {
-//        sp.edit {
-//            putInt("today", 0)
-//            putBoolean("today_flag", true)
-//        }
-//    }
-    profileDef()
     //for Toast
     val context = LocalContext.current
 
