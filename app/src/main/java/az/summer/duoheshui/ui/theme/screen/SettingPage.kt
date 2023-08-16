@@ -350,11 +350,12 @@ fun SettingPage() {
                         Row() {
                             IconButton(
                                 onClick = {
-                                    Toast.makeText(
-                                        context,
-                                        "Give me a star",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    startActivity(
+                                        context, Intent(
+                                            Intent.ACTION_VIEW,
+                                            Uri.parse("https://az0x01-blog.vercel.app/")
+                                        ), null
+                                    )
                                 },
                                 modifier = Modifier.size(80.dp)
                             ) {

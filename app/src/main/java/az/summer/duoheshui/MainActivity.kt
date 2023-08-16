@@ -1,8 +1,10 @@
 package az.summer.duoheshui
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -56,6 +58,7 @@ import az.summer.duoheshui.ui.theme.navigation.Screen
 import az.summer.duoheshui.ui.theme.screen.HomePage
 import az.summer.duoheshui.ui.theme.screen.ProfilePage
 import az.summer.duoheshui.ui.theme.screen.SettingPage
+import az.summer.duoheshui.ui.theme.screen.profileDef
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -66,12 +69,36 @@ import compose.icons.fontawesomeicons.Brands
 import compose.icons.fontawesomeicons.Regular
 import compose.icons.fontawesomeicons.brands.Github
 import compose.icons.fontawesomeicons.brands.Telegram
+import java.text.ParseException
+import java.time.Duration
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
+var numberOfDays: Long = 0
 class MainActivity : ComponentActivity() {
+    lateinit var prefs: SharedPreferences
+    override fun onDestroy() {
+        super.onDestroy()
+        val last = LocalDate.now()
+        prefs.edit().putString("last_exit", last.toString()).apply()
+    }
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val currentScreen = mutableStateOf(Screen.Home.id)
+
+        prefs = getSharedPreferences("cal", MODE_PRIVATE)
+        val lastExit = prefs.getString("last_exit", "2023-01-01")
+        try {
+            val now = LocalDate.now()
+            val diffNumber = Duration.between(LocalDate.parse(lastExit, DateTimeFormatter.ISO_DATE).atStartOfDay(),now.atStartOfDay()).toDays()
+            numberOfDays = diffNumber
+            Log.d("diff", numberOfDays.toString())
+        } catch (e: ParseException) {
+            // 处理异常
+            e.printStackTrace()
+        }
 
         setContent {
             DuoheshuiTheme {
@@ -108,7 +135,9 @@ class MainActivity : ComponentActivity() {
                                         ) {
                                             Spacer(modifier = Modifier.height(8.dp))
                                             Box(
-                                                modifier = Modifier.size(240.dp).fillMaxSize(),
+                                                modifier = Modifier
+                                                    .size(240.dp)
+                                                    .fillMaxSize(),
                                                 propagateMinConstraints = false
                                             ) {
                                                 Stars()
@@ -130,7 +159,7 @@ class MainActivity : ComponentActivity() {
                                                     onClick = {
                                                         Toast.makeText(
                                                             context,
-                                                            "Give me a star",
+                                                            "Bo~",
                                                             Toast.LENGTH_SHORT
                                                         ).show()
                                                     },
@@ -269,4 +298,3 @@ fun AppNavigationBar(selectedId: MutableState<String>) {
         }
     }
 }
-    

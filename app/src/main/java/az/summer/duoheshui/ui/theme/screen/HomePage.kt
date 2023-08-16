@@ -1,5 +1,7 @@
 package az.summer.duoheshui.ui.theme.screen
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -33,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.core.content.edit
 import az.summer.duoheshui.R
 import az.summer.duoheshui.module.CC
 import az.summer.duoheshui.module.ShareUtil
@@ -55,11 +58,32 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 
 @OptIn(ExperimentalMaterialApi::class, DelicateCoroutinesApi::class)
 @Composable
 fun HomePage() {
-
+//    val sp: SharedPreferences = LocalContext.current.getSharedPreferences("my_data",
+//        Context.MODE_PRIVATE
+//    )
+//
+//    val flag = sp.getBoolean("arr_flag", false)
+//    if (!flag) {
+//        val list = doubleArrayOf(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+//        sp.edit {
+//            putString("water_array", JSONArray(list).toString())
+//            putBoolean("arr_flag", true)
+//        }
+//    }
+//
+//    val dayflag = sp.getBoolean("today_flag", false)
+//    if (!dayflag) {
+//        sp.edit {
+//            putInt("today", 0)
+//            putBoolean("today_flag", true)
+//        }
+//    }
+    profileDef()
     //for Toast
     val context = LocalContext.current
 

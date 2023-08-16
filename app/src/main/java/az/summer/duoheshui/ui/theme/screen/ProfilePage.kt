@@ -1,5 +1,8 @@
 package az.summer.duoheshui.ui.theme.screen
 
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.slideInVertically
@@ -7,11 +10,14 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.with
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Add
@@ -29,15 +35,67 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import az.summer.duoheshui.module.Char
+import androidx.core.content.edit
+import az.summer.duoheshui.numberOfDays
 import az.summer.duoheshui.ui.theme.SansFamily
+import com.charts.plotwizard.animation.AnimationType
+import com.charts.plotwizard.chartdata.ChartEntry
+import com.charts.plotwizard.chartstyle.ChartStyle
+import com.charts.plotwizard.ui.Chart
+import com.charts.plotwizard.ui.theme.Pink40
+import com.charts.plotwizard.ui.theme.Purple80
+import org.json.JSONArray
+
+@Composable
+fun profileDef(){
+
+}
 
 @Composable
 fun ProfilePage() {
+    val sp: SharedPreferences = LocalContext.current.getSharedPreferences("my_data", MODE_PRIVATE)
+
+    val flag = sp.getBoolean("arr_flag", false)
+    if (!flag) {
+        val list = doubleArrayOf(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        sp.edit {
+            putString("water_array", JSONArray(list).toString())
+            putBoolean("arr_flag", true)
+        }
+    }
+
+    val dayflag = sp.getBoolean("today_flag", false)
+    if (!dayflag) {
+        sp.edit {
+            putInt("today", 0)
+            putBoolean("today_flag", true)
+        }
+    }
+
+    var temp = sp.getInt("today", 0)
+    var dayWaterValue by remember { mutableStateOf(temp) }
+
+    val context = LocalContext.current
+
+    var today = sp.getInt("today", 0)!!.toFloat() / 1000
+
+    val List = sp.getString("water_array", null)
+    var savedList = DoubleArray(JSONArray(List).length()) { JSONArray(List).getDouble(it) }
+
+//    val sp: SharedPreferences = LocalContext.current.getSharedPreferences("my_data", MODE_PRIVATE)
+//    val List = sp.getString("water_array", null)
+//    var savedList = DoubleArray(JSONArray(List).length()) { JSONArray(List).getDouble(it) }
+    repeat(numberOfDays.toInt()) {
+        addDayData(sp.getInt("today", 0)!!.toFloat() / 1000, savedList)
+        Log.d("aaa", "1")
+    }
+    numberOfDays = 0
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -46,7 +104,7 @@ fun ProfilePage() {
         verticalArrangement = Arrangement.SpaceAround
     ) {
         var count by remember {
-            mutableStateOf(0)
+            mutableStateOf(dayWaterValue)
         }
         ClickAdd(
             count = count,
@@ -60,7 +118,7 @@ fun ProfilePage() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Button(
-                onClick = { count += 100 },
+                onClick = { count += 100;sp.edit { putInt("today", count) } },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
@@ -80,7 +138,7 @@ fun ProfilePage() {
             }
             Spacer(modifier = Modifier.width(45.dp))
             Button(
-                onClick = { count += 300 },
+                onClick = { count += 300;sp.edit { putInt("today", count) } },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
@@ -100,7 +158,7 @@ fun ProfilePage() {
             }
         }
         Column(modifier = Modifier) {
-            Char()
+            Char(savedList, today)
         }
     }
 }
@@ -135,7 +193,7 @@ fun ClickAdd(
                 targetState = char,
                 transitionSpec = {
                     slideInVertically { it } with slideOutVertically { -it }
-                }, label = ""
+                }
             ) { char ->
                 Text(
                     text = char.toString(),
@@ -149,5 +207,53 @@ fun ClickAdd(
 
             }
         }
+    }
+}
+@Composable
+fun addDayData(num: Float, savedList: DoubleArray) {
+    val sp: SharedPreferences = LocalContext.current.getSharedPreferences("my_data", MODE_PRIVATE)
+    for (i in savedList.size - 1 downTo 1) {
+        savedList[i] = savedList[i - 1]
+    }
+    savedList[0] = num.toDouble()
+    sp.edit { putString("water_array", JSONArray(savedList).toString()) }
+    sp.edit { putInt("today", 0) }
+}
+
+
+@Composable
+fun Char(savedList: DoubleArray, today: Float) {
+    fun MockRangeList() = listOf(
+        ChartEntry.RangeBar(0F, savedList[7].toFloat()),
+        ChartEntry.RangeBar(0F, savedList[6].toFloat()),
+        ChartEntry.RangeBar(0F, savedList[5].toFloat()),
+        ChartEntry.RangeBar(0F, savedList[4].toFloat()),
+        ChartEntry.RangeBar(0F, savedList[3].toFloat()),
+        ChartEntry.RangeBar(0F, savedList[2].toFloat()),
+        ChartEntry.RangeBar(0F, savedList[1].toFloat()),
+        ChartEntry.RangeBar(0F, savedList[0].toFloat()),
+        ChartEntry.RangeBar(0F, today),
+    )
+
+//    Button(onClick = {
+////        addDayData(sp.getInt("today", 0)!!.toFloat() / 1000, savedList, sp)
+//    }) {
+//        Icon(imageVector = Icons.TwoTone.AccountCircle, contentDescription = "")
+//    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(0.9f)
+            .size(325.dp)
+    ) {
+        Chart(
+            chartListData = MockRangeList(),
+            animationType = AnimationType.Bouncy(10F),
+            chartStyle = ChartStyle.BarChartStyle(
+                chartBrush = listOf(Pink40, Purple80),
+                barCornerRadius = 20F,
+                chartValueTextColor = MaterialTheme.colorScheme.primary
+            )
+        )
     }
 }
