@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Duoheshui</string>
+    <string name="star" translatable="false">Please give me a star</string>
 </resources>
