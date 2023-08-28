@@ -250,15 +250,14 @@ fun HomePage() {
                         )
                     }
                 },
-                onLongClick = {
-                    val sharedToken = UserPersistentStorage(context).get()?.wallet?.balance
-                    if (sharedToken.isNullOrEmpty()) {
-                        Toast.makeText(context, "Token void", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, sharedToken, Toast.LENGTH_SHORT).show()
-                    }
-                },
-
+//                onLongClick = {
+//                    val sharedToken = UserPersistentStorage(context).get()?.wallet?.balance
+//                    if (sharedToken.isNullOrEmpty()) {
+//                        Toast.makeText(context, "Token void", Toast.LENGTH_SHORT).show()
+//                    } else {
+//                        Toast.makeText(context, sharedToken, Toast.LENGTH_SHORT).show()
+//                    }
+//                },
                 )
         }
     }

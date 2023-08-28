@@ -121,9 +121,14 @@ fun SettingPage() {
         onResult = { result ->
             run {
                 if (result.contents == null) {
-                    println("null")
+                    Toast.makeText(
+                        context,
+                        "null",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else {
                     hotDevice.value = TextFieldValue(text = result.contents)
+                    ShareUtil.putString("hot", coldDevice.value.text, context)
                 }
             }
         }
@@ -133,9 +138,14 @@ fun SettingPage() {
         onResult = { result ->
             run {
                 if (result.contents == null) {
-                    println("null")
+                    Toast.makeText(
+                        context,
+                        "null",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else {
                     coldDevice.value = TextFieldValue(text = result.contents)
+                    ShareUtil.putString("cold", coldDevice.value.text, context)
                 }
             }
         }
