@@ -66,12 +66,15 @@ import az.summer.duoheshui.module.CC
 import az.summer.duoheshui.module.MainSettingItem
 import az.summer.duoheshui.module.SettingItem
 import az.summer.duoheshui.module.ShareUtil
+import az.summer.duoheshui.module.UserBalanceStorage
 import az.summer.duoheshui.module.UserPersistentStorage
 import az.summer.duoheshui.module.enMobile
 import az.summer.duoheshui.module.enSetDrinkDevice
 import az.summer.duoheshui.module.enVcode
+import az.summer.duoheshui.module.getUserInfo
 import az.summer.duoheshui.module.postmsg
 import az.summer.duoheshui.module.posttty
+import az.summer.duoheshui.module.userInfoPostmsg
 import az.summer.duoheshui.ui.theme.SansFamily
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
@@ -89,13 +92,10 @@ import compose.icons.fontawesomeicons.solid.Wallet
 
 var phoneNum = mutableStateOf(TextFieldValue(""))
 var encryptomobile = CC().encrypt(enMobile(phoneNum.component1().text))
-
 var verifyCode = mutableStateOf(TextFieldValue(""))
 var encryptocode = CC().encrypt((enVcode(verifyCode.component1().text, phoneNum.component1().text)))
-
 var hotDevice = mutableStateOf(TextFieldValue(""))
 var encryptoHotDevice = CC().encrypt(enSetDrinkDevice(hotDevice.component1().text))
-
 var coldDevice = mutableStateOf(TextFieldValue(""))
 var encryptoColdDevice = CC().encrypt(enSetDrinkDevice(coldDevice.component1().text))
 
@@ -457,9 +457,11 @@ fun SettingPage() {
                         TextField(
                             value = hotDevice.value,
                             label = {
-                                Text(text = "Hot Water",
-                                     fontFamily = SansFamily,
-                                     fontWeight = FontWeight.Medium)
+                                Text(
+                                    text = "Hot Water",
+                                    fontFamily = SansFamily,
+                                    fontWeight = FontWeight.Medium
+                                )
                             },
                             onValueChange = {
                                 hotDevice.value = it
@@ -478,6 +480,7 @@ fun SettingPage() {
                                     PermissionStatus.Granted -> {
                                         scanLauncherhotDevice.launch(ScanOptions())
                                     }
+
                                     is PermissionStatus.Denied -> {
                                         Toast.makeText(
                                             context,
@@ -502,9 +505,11 @@ fun SettingPage() {
                         TextField(
                             value = coldDevice.value,
                             label = {
-                                Text(text = "Cold Water",
-                                     fontFamily = SansFamily,
-                                     fontWeight = FontWeight.Medium)
+                                Text(
+                                    text = "Cold Water",
+                                    fontFamily = SansFamily,
+                                    fontWeight = FontWeight.Medium
+                                )
                             },
                             onValueChange = {
                                 coldDevice.value = it
@@ -528,6 +533,7 @@ fun SettingPage() {
 
                                         scanLaunchercoldDevice.launch(ScanOptions())
                                     }
+
                                     is PermissionStatus.Denied -> {
                                         Toast.makeText(
                                             context,
@@ -559,14 +565,17 @@ fun SettingPage() {
                 }
             }
         }
+        var updateBalance by remember { mutableStateOf(false) }
         MainSettingItem(
             modifier = Modifier,
             enable = false,
             selected = true,
-            title = if (UserPersistentStorage(context).get()?.token == null) "Setting" else UserPersistentStorage(
-                context
-            ).get()?.wallet?.balance.toString() + " CNY",
-            icon = if (UserPersistentStorage(context).get()?.token == null) Icons.Outlined.Settings else FontAwesomeIcons.Solid.Wallet
+            title = if (UserBalanceStorage(context).get()?.wallet == null) "Setting" else UserBalanceStorage(context).get()?.wallet!!.balance + " CNY",
+            icon = if (UserPersistentStorage(context).get()?.token == null) Icons.Outlined.Settings else FontAwesomeIcons.Solid.Wallet,
+            onClick = {
+                getUserInfo(userInfoPostmsg(encryptomobile,UserPersistentStorage(context).get()?.token.toString()),context)
+                updateBalance = !updateBalance
+            }
         )
         Spacer(modifier = Modifier.height(25.dp))
 
