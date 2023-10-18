@@ -9,6 +9,10 @@ object ShareUtil {
 
     private var sps: SharedPreferences? = null
 
+    enum class TapDeviceType(val type: String) {
+        COLD("cold"), HOT("hot")
+    }
+
     private fun getSps(context: Context): SharedPreferences {
         if (sps == null) {
             sps = context.getSharedPreferences("default", Context.MODE_PRIVATE)

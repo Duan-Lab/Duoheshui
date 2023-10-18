@@ -128,7 +128,7 @@ fun SettingPage() {
                     ).show()
                 } else {
                     hotDevice.value = TextFieldValue(text = result.contents)
-                    ShareUtil.putString("hot", coldDevice.value.text, context)
+                    ShareUtil.putString("hot", hotDevice.value.text, context)
                 }
             }
         }

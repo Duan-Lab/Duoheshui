@@ -32,10 +32,9 @@ data class Order(
     val order_sn: String,
 )
 
-fun getUserInfo(data: String, context: Context) {
+fun getUserInfo(data: String, context: Context, onSuccessCallback: (() -> Unit)? = null) {
     val url = "http://newxiaotian.tianji-inc.com/api/v1/UserInfoApi/getUserInfo"
     //添加post请求参数
-    val json = data.toRequestBody()
     val requestBody = FormBody.Builder()
         .add("gptechMsg", data)
         .build()
@@ -62,11 +61,37 @@ fun getUserInfo(data: String, context: Context) {
                         value = value.replace("\\", "").replace("\"", "")
                         val updateUserInfo = CC().decrypt(value)
                         ShareUtil.putString("balance", updateUserInfo, context)
+                        onSuccessCallback?.invoke()
                     }
                 }
             }
-
         })
+}
+
+fun getUserInfoBlocking(data: String, context: Context) {
+    val url = "http://newxiaotian.tianji-inc.com/api/v1/UserInfoApi/getUserInfo"
+    //添加post请求参数
+    val requestBody = FormBody.Builder()
+        .add("gptechMsg", data)
+        .build()
+
+    //创建request请求对象
+    val request = Request.Builder()
+        .url(url)
+        .post(requestBody)
+        .build()
+
+    //创建call并调用enqueue()方法实现网络请求
+    val response = OkHttpClient().newCall(request).execute()
+    if (response.isSuccessful) {
+        response.body?.let {
+            val json = JSONObject(it.string())
+            var value = json.getString("data")
+            value = value.replace("\\", "").replace("\"", "")
+            val updateUserInfo = CC().decrypt(value)
+            ShareUtil.putString("balance", updateUserInfo, context)
+        }
+    }
 }
 
 fun userInfoPostmsg(encryptodata: String, token: String): String {
@@ -86,6 +111,7 @@ fun userInfoPostmsg(encryptodata: String, token: String): String {
     gpteach.put("header", header)
     return gpteach.toString()
 }
+
 class UserBalanceStorage(private val context: Context) {
     fun get(): User? {
         val preferenceString = ShareUtil.getString("balance", context)

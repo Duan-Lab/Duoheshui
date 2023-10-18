@@ -1,7 +1,5 @@
 package az.summer.duoheshui.ui.theme.screen
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Surface
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,31 +32,32 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
-import androidx.core.content.edit
 import az.summer.duoheshui.R
 import az.summer.duoheshui.module.CC
 import az.summer.duoheshui.module.ShareUtil
 import az.summer.duoheshui.module.SuperFloatingActionButton
+import az.summer.duoheshui.module.TapDeviceWithAction
 import az.summer.duoheshui.module.UserPersistentStorage
 import az.summer.duoheshui.module.VerticalSlider
 import az.summer.duoheshui.module.drinkingPost
 import az.summer.duoheshui.module.drinkpostmsg
 import az.summer.duoheshui.module.enSetDrinkDevice
-import az.summer.duoheshui.numberOfDays
+import az.summer.duoheshui.module.mix
 import az.summer.duoheshui.ui.theme.SansFamily
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import compose.icons.WeatherIcons
+import compose.icons.weathericons.Hail
 import compose.icons.weathericons.Thermometer
 import compose.icons.weathericons.ThermometerExterior
+import compose.icons.weathericons.ThermometerInternal
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.json.JSONArray
 
 @OptIn(DelicateCoroutinesApi::class)
 @Composable
@@ -69,6 +67,9 @@ fun HomePage() {
 
     var showPopup by remember { mutableStateOf(false) }
     var sliderValue by remember { mutableStateOf(0f) }
+
+    val coldTap = TapDeviceWithAction(context, ShareUtil.TapDeviceType.COLD)
+    val hotTap = TapDeviceWithAction(context, ShareUtil.TapDeviceType.HOT)
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -130,87 +131,36 @@ fun HomePage() {
                 icon = { Icon(imageVector = WeatherIcons.Thermometer, contentDescription = "hot") },
                 text = {
                     Text(
-                        " HOT ",
+                        " HOT",
+                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp),
+                        fontFamily = SansFamily,
+                        fontWeight = FontWeight.Medium
+                    )
+                },
+                onClick = { hotTap.on() },
+            )
+            Spacer(Modifier.width(25.dp))
+            SuperFloatingActionButton(
+                icon = {
+                    Icon(
+                        imageVector = WeatherIcons.Hail,
+                        contentDescription = "mixed"
+                    )
+                },
+                text = {
+                    Text(
+                        "MIX",
                         style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp),
                         fontFamily = SansFamily,
                         fontWeight = FontWeight.Medium
                     )
                 },
                 onClick = {
-                    if (UserPersistentStorage(context).get() == null) Toast.makeText(
-                        context,
-                        "Please login",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    else {
-                        Toast.makeText(context, "Wait...", Toast.LENGTH_SHORT).show()
-                        encryptoHotDevice =
-                            CC().encrypt(
-                                enSetDrinkDevice(
-                                    ShareUtil.getString("hot", context).toString()
-                                )
-                            )
-                        drinkingPost(
-                            "send_command/send",
-                            drinkpostmsg(
-                                "send",
-                                encryptoHotDevice,
-                                UserPersistentStorage(context).get()?.token.toString()
-                            ),
-                            context
-                        )
-                    }
-
-                },
-
-                )
-            Spacer(modifier = Modifier.width(75.dp))
+                    mix(hotTap, coldTap)
+                }
+            )
+            Spacer(Modifier.width(25.dp))
             SuperFloatingActionButton(
-                modifier = Modifier.pointerInput(Unit) {
-                    detectDragGestures(
-                        onDragStart = {
-                            showPopup = true
-                            Modifier
-                        },
-                        onDragEnd = {
-                            Toast.makeText(
-                                context,
-                                "${sliderValue.toInt()} seconds later",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            showPopup = false
-
-                            GlobalScope.launch(context = Dispatchers.IO) {
-                                delay(sliderValue.toLong() * 1000)
-                                encryptoColdDevice =
-                                    CC().encrypt(
-                                        enSetDrinkDevice(
-                                            ShareUtil.getString("cold", context).toString()
-                                        )
-                                    )
-                                drinkingPost(
-                                    "send_command/send",
-                                    drinkpostmsg(
-                                        "send",
-                                        encryptoColdDevice,
-                                        UserPersistentStorage(context).get()?.token.toString()
-                                    ),
-                                    context
-                                )
-                                Looper.prepare()
-                                Toast.makeText(context, "Di", Toast.LENGTH_SHORT).show()
-                                Looper.loop()
-                            }
-                            Thread.sleep(1000)
-
-                        },
-                        onDrag = { change, dragAmount ->
-                            change.consume()
-                            sliderValue =
-                                (sliderValue - dragAmount.y / 48f).coerceIn(0f, 30f)
-                        },
-                    )
-                },
                 icon = {
                     Icon(
                         imageVector = WeatherIcons.ThermometerExterior,
@@ -226,29 +176,7 @@ fun HomePage() {
                     )
                 },
                 onClick = {
-                    if (UserPersistentStorage(context).get()?.token == null) Toast.makeText(
-                        context,
-                        "Please login",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    else {
-                        Toast.makeText(context, "Wait...", Toast.LENGTH_SHORT).show()
-                        encryptoColdDevice =
-                            CC().encrypt(
-                                enSetDrinkDevice(
-                                    ShareUtil.getString("cold", context).toString()
-                                )
-                            )
-                        drinkingPost(
-                            "send_command/send",
-                            drinkpostmsg(
-                                "send",
-                                encryptoColdDevice,
-                                UserPersistentStorage(context).get()?.token.toString()
-                            ),
-                            context
-                        )
-                    }
+                    coldTap.on()
                 },
 //                onLongClick = {
 //                    val sharedToken = UserPersistentStorage(context).get()?.wallet?.balance
@@ -258,7 +186,7 @@ fun HomePage() {
 //                        Toast.makeText(context, sharedToken, Toast.LENGTH_SHORT).show()
 //                    }
 //                },
-                )
+            )
         }
     }
     if (showPopup) {
