@@ -22,14 +22,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Build
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -38,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -56,7 +54,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -175,7 +172,7 @@ fun SettingPage() {
                             verticalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = "Login",
+                                text = "登录",
                                 modifier = Modifier,
                                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 42.sp),
                                 color = MaterialTheme.colorScheme.primary,
@@ -187,7 +184,7 @@ fun SettingPage() {
                                 value = phoneNum.value,
                                 label = {
                                     Text(
-                                        text = "Phone Number",
+                                        text = "手机号码",
                                         fontFamily = SansFamily,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -203,7 +200,6 @@ fun SettingPage() {
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                             )
                             Spacer(modifier = Modifier.height(20.dp))
-
                             Row(
                                 modifier = Modifier,
                                 verticalAlignment = CenterVertically
@@ -213,7 +209,7 @@ fun SettingPage() {
                                         value = verifyCode.value,
                                         label = {
                                             Text(
-                                                text = "Verify Code",
+                                                text = "验证码",
                                                 fontFamily = SansFamily,
                                                 fontWeight = FontWeight.Medium
                                             )
@@ -235,7 +231,6 @@ fun SettingPage() {
                                 }
                                 Spacer(modifier = Modifier.width(20.dp))
                                 Box(modifier = Modifier) {
-
                                     Button(
                                         enabled = verifyButtonState,
                                         onClick = {
@@ -252,7 +247,7 @@ fun SettingPage() {
                                     )
                                     {
                                         Text(
-                                            text = "Verify",
+                                            text = "验证",
                                             fontFamily = SansFamily,
                                             fontWeight = FontWeight.Medium
                                         )
@@ -271,7 +266,7 @@ fun SettingPage() {
                                 }
                             }) {
                                 Text(
-                                    text = "Let's Go",
+                                    text = "启动！",
                                     fontFamily = SansFamily,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -304,7 +299,7 @@ fun SettingPage() {
                             )
                             Spacer(modifier = Modifier.height(20.dp))
                             (
-                                    if (UserPersistentStorage(context).get()?.mobile.isNullOrEmpty()) "Login"
+                                    if (UserPersistentStorage(context).get()?.mobile.isNullOrEmpty()) "登录"
                                     else "Stu " + (UserPersistentStorage(
                                         context
                                     ).get()?.mobile?.substring(7) ?: "")).let {
@@ -346,7 +341,7 @@ fun SettingPage() {
                     ) {
                         Image(painter = painterResource(R.drawable.logo), contentDescription = "")
                         Text(
-                            text = "Duoheshui",
+                            text = "多喝水",
                             textAlign = TextAlign.Right,
                             modifier = Modifier.align(Alignment.CenterHorizontally),
                             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
@@ -428,45 +423,33 @@ fun SettingPage() {
 
             }
         }
-        if (openDevices) Dialog(
+        if (openDevices) AlertDialog(
+            title = { Text("水龙头") },
+            confirmButton = {
+                TextButton(onClick = { openDevices = false }) {
+                    Text(
+                        text = "保存"
+                    )
+                }
+            },
             onDismissRequest = { openDevices = false },
-        ) {
-            Surface(
-                modifier = Modifier,
-                shape = RoundedCornerShape(24.dp),
-                color = MaterialTheme.colorScheme.primaryContainer,
-                onClick = { openDevices = true }
-            ) {
+            text = {
                 Column(
-                    modifier = Modifier
-                        .size(400.dp, 400.dp)
-                        .background(MaterialTheme.colorScheme.primaryContainer),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = "Devices",
-                        modifier = Modifier,
-                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 36.sp),
-                        color = MaterialTheme.colorScheme.primary,
-                        fontFamily = SansFamily,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Spacer(modifier = Modifier.height(30.dp))
                     Row(modifier = Modifier) {
                         TextField(
                             value = hotDevice.value,
                             label = {
                                 Text(
-                                    text = "Hot Water",
+                                    text = "热水",
                                     fontFamily = SansFamily,
                                     fontWeight = FontWeight.Medium
                                 )
                             },
                             onValueChange = {
                                 hotDevice.value = it
-//                            encryptoHotDevice =
-//                                CC().encrypt(enSetDrinkDevice(hotDevice.component1().text))
                                 ShareUtil.putString("hot", hotDevice.value.text, context)
                             },
                             modifier = Modifier.width(230.dp),
@@ -484,19 +467,24 @@ fun SettingPage() {
                                     is PermissionStatus.Denied -> {
                                         Toast.makeText(
                                             context,
-                                            "Please grant the camera permission",
+                                            "请提供相机权限",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
                                 }
-                            }, modifier = Modifier.size(48.dp)
+                            }, modifier = Modifier
+                                .size(48.dp)
+                                .padding(start = 16.dp)
                         ) {
                             Icon(
                                 imageVector = FontAwesomeIcons.Solid.Camera,
                                 contentDescription = "camera",
                                 modifier = Modifier
                                     .size(48.dp)
-                                    .padding(top = 18.dp)
+                                    .padding(top = 18.dp),
+                                tint = MaterialTheme.colorScheme.primary.copy(
+                                    alpha = 0.9f
+                                )
                             )
                         }
                     }
@@ -506,7 +494,7 @@ fun SettingPage() {
                             value = coldDevice.value,
                             label = {
                                 Text(
-                                    text = "Cold Water",
+                                    text = "凉水",
                                     fontFamily = SansFamily,
                                     fontWeight = FontWeight.Medium
                                 )
@@ -542,50 +530,51 @@ fun SettingPage() {
                                         ).show()
                                     }
                                 }
-                            }, modifier = Modifier.size(48.dp)
+                            }, modifier = Modifier
+                                .size(48.dp)
+                                .padding(start = 16.dp)
                         ) {
                             Icon(
                                 imageVector = FontAwesomeIcons.Solid.Camera,
                                 contentDescription = "camera",
                                 modifier = Modifier
                                     .size(48.dp)
-                                    .padding(top = 18.dp)
+                                    .padding(top = 18.dp),
+                                tint = MaterialTheme.colorScheme.primary.copy(
+                                    alpha = 0.9f
+                                )
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(35.dp))
-                    ElevatedButton(onClick = { openDevices = false }) {
-                        Text(
-                            text = "Save",
-                            fontFamily = SansFamily,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
                 }
             }
-        }
+        )
         var updateBalance by remember { mutableStateOf(false) }
         MainSettingItem(
-            modifier = Modifier,
             enable = false,
             selected = true,
-            title = if (UserBalanceStorage(context).get()?.wallet == null) "Setting" else UserBalanceStorage(context).get()?.wallet!!.balance + " CNY",
+            title = if (UserBalanceStorage(context).get()?.wallet == null) "Setting" else UserBalanceStorage(
+                context
+            ).get()?.wallet!!.balance + " CNY",
             icon = if (UserPersistentStorage(context).get()?.token == null) Icons.Outlined.Settings else FontAwesomeIcons.Solid.Wallet,
             onClick = {
-                getUserInfo(userInfoPostmsg(encryptomobile,UserPersistentStorage(context).get()?.token.toString()),context)
+                getUserInfo(
+                    userInfoPostmsg(
+                        encryptomobile,
+                        UserPersistentStorage(context).get()?.token.toString()
+                    ), context
+                )
                 updateBalance = !updateBalance
             }
         )
         Spacer(modifier = Modifier.height(25.dp))
-
         SettingItem(
             modifier = Modifier,
             true,
             false,
-            title = "Accounts",
+            title = "账户",
             icon = Icons.Outlined.AccountCircle,
-            desc = "What could we do?",
+            desc = "登录账户",
             onClick = {
                 openDialog = true
                 openSignIn = UserPersistentStorage(context).get() == null
@@ -596,57 +585,16 @@ fun SettingPage() {
             modifier = Modifier,
             true,
             false,
-            title = "Devices",
+            title = "水龙头",
             icon = Icons.Outlined.Build,
-            desc = "What could we do?",
+            desc = "添加和修改凉水/热水设备",
             onClick = { openDevices = true }
         )
         SettingItem(
             modifier = Modifier,
             true,
             false,
-            title = "Color & Style",
-            icon = Icons.Outlined.Edit,
-            desc = "What could we do?",
-            onClick = { }
-        )
-
-        SettingItem(
-            modifier = Modifier,
-            true,
-            false,
-            title = "Languages",
-            icon = Icons.Outlined.Place,
-            desc = "What could we do?",
-            onClick = { openLanguages = true }
-        )
-
-        DropdownMenu(
-            expanded = openLanguages,
-            offset = DpOffset(30.dp, (-200).dp),
-            onDismissRequest = {
-                openLanguages = false
-            }
-        ) {
-            DropdownMenuItem(
-                text = { Text("English") },
-                onClick = { /* Handle edit! */ },
-            )
-            DropdownMenuItem(
-                text = { Text("简体中文") },
-                onClick = { /* Handle edit! */ },
-            )
-            DropdownMenuItem(
-                text = { Text("繁體中文") },
-                onClick = { /* Handle settings! */ },
-            )
-        }
-
-        SettingItem(
-            modifier = Modifier,
-            true,
-            false,
-            title = "About",
+            title = "关于",
             icon = Icons.Outlined.Info,
             desc = "What could we do?",
             onClick = { openAbout = true }

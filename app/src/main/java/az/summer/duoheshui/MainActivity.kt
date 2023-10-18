@@ -148,7 +148,7 @@ class MainActivity : ComponentActivity() {
                                                 Stars()
                                             }
                                             Text(
-                                                text = "Duoheshui",
+                                                text = "多喝水",
                                                 textAlign = TextAlign.Right,
                                                 modifier = Modifier.align(CenterHorizontally),
                                                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
@@ -233,7 +233,7 @@ class MainActivity : ComponentActivity() {
                                     Text(
                                         modifier = Modifier
                                             .padding(0.dp),
-                                        text = "Duoheshui",
+                                        text = "多喝水",
                                         overflow = TextOverflow.Ellipsis,
                                         maxLines = 1,
                                         style = TextStyle(

@@ -17,14 +17,16 @@ import kotlinx.coroutines.runBlocking
 
 class TapDeviceWithAction(val context: Context, private val type: ShareUtil.TapDeviceType) {
     private val looper = Looper.getMainLooper()
+
+    fun available(): Boolean {
+        return UserPersistentStorage(context).get()?.token != null &&
+                ShareUtil.getString(type.type, context) != null
+    }
+
     fun onSync() {
         Handler(looper).post {
             Toast.makeText(context, "Wait...", Toast.LENGTH_SHORT).show()
         }
-        Log.v(
-            "TapAction",
-            if (type == ShareUtil.TapDeviceType.COLD) encryptoColdDevice else encryptoHotDevice
-        )
         encryptoHotDevice =
             CC().encrypt(
                 enSetDrinkDevice(

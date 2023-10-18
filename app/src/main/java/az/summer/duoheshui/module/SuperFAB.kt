@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -106,10 +107,11 @@ fun SuperFloatingActionButton(
     contentColor: Color = contentColorFor(containerColor),
     elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation(),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    disabled: Boolean = false,
 ) {
     FloatingActionButton(
         onClick = {},
-        modifier = modifier,
+        modifier = modifier.alpha(if (disabled) 0.5f else 1f),
         shape = shape,
         containerColor = containerColor,
         contentColor = contentColor,
@@ -124,7 +126,7 @@ fun SuperFloatingActionButton(
             modifier = Modifier
                 .combinedClickable(
                     onLongClick =  onLongClick
-                ) { onClick() }
+                ) { if (!disabled) onClick() }
                 .height(56.dp),
             contentAlignment = Alignment.Center
         ) {

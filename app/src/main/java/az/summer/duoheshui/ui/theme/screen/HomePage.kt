@@ -86,6 +86,7 @@ fun HomePage() {
         Spacer(modifier = Modifier.height(75.dp))
         Row(modifier = Modifier) {
             SuperFloatingActionButton(
+                disabled = !hotTap.available(),
                 modifier = Modifier.pointerInput(Unit) {
                     detectDragGestures(
                         onDragStart = { // 长按时设置showPopup为true
@@ -131,7 +132,7 @@ fun HomePage() {
                 icon = { Icon(imageVector = WeatherIcons.Thermometer, contentDescription = "hot") },
                 text = {
                     Text(
-                        " HOT",
+                        "热水",
                         style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp),
                         fontFamily = SansFamily,
                         fontWeight = FontWeight.Medium
@@ -141,6 +142,7 @@ fun HomePage() {
             )
             Spacer(Modifier.width(25.dp))
             SuperFloatingActionButton(
+                disabled = !hotTap.available() || !coldTap.available(),
                 icon = {
                     Icon(
                         imageVector = WeatherIcons.Hail,
@@ -149,7 +151,7 @@ fun HomePage() {
                 },
                 text = {
                     Text(
-                        "MIX",
+                        "兑水",
                         style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp),
                         fontFamily = SansFamily,
                         fontWeight = FontWeight.Medium
@@ -161,6 +163,7 @@ fun HomePage() {
             )
             Spacer(Modifier.width(25.dp))
             SuperFloatingActionButton(
+                disabled = !coldTap.available(),
                 icon = {
                     Icon(
                         imageVector = WeatherIcons.ThermometerExterior,
@@ -169,7 +172,7 @@ fun HomePage() {
                 },
                 text = {
                     Text(
-                        "COLD",
+                        "凉水",
                         style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp),
                         fontFamily = SansFamily,
                         fontWeight = FontWeight.Medium

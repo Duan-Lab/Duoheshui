@@ -12,9 +12,9 @@ sealed class Screen(
     val icon: ImageVector,
 ) {
 
-    object Home : Screen("home", "Home", Icons.Outlined.Home)
-    object Profile : Screen("profile", "Profile", Icons.Outlined.List)
-    object Setting : Screen("setting", "Setting", Icons.Outlined.Settings)
+    object Home : Screen("home", "喝水", Icons.Outlined.Home)
+    object Profile : Screen("profile", "记录", Icons.Outlined.List)
+    object Setting : Screen("setting", "设置", Icons.Outlined.Settings)
 
     object Items {
         val list = listOf(

@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -92,6 +94,7 @@ fun SettingItem(
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainSettingItem(
     modifier: Modifier = Modifier,
@@ -105,14 +108,9 @@ fun MainSettingItem(
     val view = LocalView.current
     Surface(
         modifier = modifier
-            .clickable {
-                view.playSoundEffect(SoundEffectConstants.CLICK)
-                onClick()
-            }
             .alpha(if (enable) 1f else 1f),
-        color = Color.Unspecified,
-
-        ) {
+        onClick = onClick
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -129,8 +127,10 @@ fun MainSettingItem(
                 Icon(
                     imageVector = it,
                     contentDescription = title,
-                    modifier = Modifier.padding(start = 8.dp, end = 16.dp),
-                    tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 24.dp)
+                        .width(48.dp),
+                    tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
