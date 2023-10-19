@@ -18,7 +18,7 @@ sealed class Screen(
 
     object Items {
         val list = listOf(
-            Home, Profile, Setting
+            Profile, Home, Setting
         )
     }
 

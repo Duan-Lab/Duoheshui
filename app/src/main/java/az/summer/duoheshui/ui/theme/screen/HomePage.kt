@@ -1,21 +1,27 @@
 package az.summer.duoheshui.ui.theme.screen
 
-import android.os.Looper
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,24 +30,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import az.summer.duoheshui.R
-import az.summer.duoheshui.module.CC
 import az.summer.duoheshui.module.ShareUtil
 import az.summer.duoheshui.module.SuperFloatingActionButton
 import az.summer.duoheshui.module.TapDeviceWithAction
-import az.summer.duoheshui.module.UserPersistentStorage
 import az.summer.duoheshui.module.VerticalSlider
-import az.summer.duoheshui.module.drinkingPost
-import az.summer.duoheshui.module.drinkpostmsg
-import az.summer.duoheshui.module.enSetDrinkDevice
 import az.summer.duoheshui.module.mix
 import az.summer.duoheshui.ui.theme.SansFamily
 import com.airbnb.lottie.compose.LottieAnimation
@@ -52,83 +55,70 @@ import compose.icons.WeatherIcons
 import compose.icons.weathericons.Hail
 import compose.icons.weathericons.Thermometer
 import compose.icons.weathericons.ThermometerExterior
-import compose.icons.weathericons.ThermometerInternal
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
-@OptIn(DelicateCoroutinesApi::class)
+
+@OptIn(DelicateCoroutinesApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomePage() {
     //for Toast
     val context = LocalContext.current
 
-    var showPopup by remember { mutableStateOf(false) }
-    var sliderValue by remember { mutableStateOf(0f) }
+    var sliderValue by remember { mutableStateOf(ShareUtil.getString("delay", context)?.toFloat() ?: 0f) }
 
     val coldTap = TapDeviceWithAction(context, ShareUtil.TapDeviceType.COLD)
     val hotTap = TapDeviceWithAction(context, ShareUtil.TapDeviceType.HOT)
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Bottom
     ) {
+        Text(
+            text = if (sliderValue.equals(0f)) "延时开启" else "延时开启 ${sliderValue.toInt()} 秒",
+            style = MaterialTheme.typography.titleMedium.copy(
+                color = MaterialTheme.colorScheme.secondary,
+                textDecoration = if (sliderValue.equals(0f)) TextDecoration.LineThrough else TextDecoration.None
+            ),
+            modifier = Modifier.alpha(if (sliderValue.equals(0f)) 0.2f else 1f)
+        )
+        Slider(
+            modifier = Modifier.padding(horizontal = 64.dp),
+            value = sliderValue,
+            onValueChange = {
+                sliderValue = it
+                ShareUtil.putString("delay", sliderValue.toString(), context)
+            },
+            valueRange = 0f..10f,
+            steps = 10,
+        )
         Row(
-            modifier = Modifier.size(400.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 64.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Loader()
+            Text(
+                text = "立即",
+                style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.tertiary)
+            )
+            Text(
+                text = "10s",
+                style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.tertiary)
+            )
         }
-        Spacer(modifier = Modifier.height(75.dp))
+        Spacer(modifier = Modifier.height(32.dp))
         Row(modifier = Modifier) {
             SuperFloatingActionButton(
+                elevation = FloatingActionButtonDefaults.elevation(
+                    defaultElevation = 0.dp,
+                    pressedElevation = 0.dp,
+                    focusedElevation = 0.dp,
+                    hoveredElevation = 0.dp,
+                ),
                 disabled = !hotTap.available(),
-                modifier = Modifier.pointerInput(Unit) {
-                    detectDragGestures(
-                        onDragStart = { // 长按时设置showPopup为true
-                            showPopup = true
-                            Modifier
-                        },
-                        onDragEnd = { // 松开时设置showPopup为false
-                            Toast.makeText(
-                                context,
-                                "${sliderValue.toInt()} seconds later",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            showPopup = false
-                            GlobalScope.launch(context = Dispatchers.IO) {
-                                delay(sliderValue.toLong() * 1000)
-                                encryptoHotDevice =
-                                    CC().encrypt(
-                                        enSetDrinkDevice(
-                                            ShareUtil.getString("hot", context).toString()
-                                        )
-                                    )
-                                drinkingPost(
-                                    "send_command/send",
-                                    drinkpostmsg(
-                                        "send",
-                                        encryptoHotDevice,
-                                        UserPersistentStorage(context).get()?.token.toString()
-                                    ),
-                                    context
-                                )
-                                Looper.prepare()
-                                Toast.makeText(context, "Di", Toast.LENGTH_SHORT).show()
-                                Looper.loop()
-                            }
-                        },
-                        onDrag = { change, dragAmount -> // 拖动时更新sliderValue的值
-                            change.consume()
-                            sliderValue =
-                                (sliderValue - dragAmount.y / 48f).coerceIn(0f, 30f)
-                        },
-                    )
-                },
                 icon = { Icon(imageVector = WeatherIcons.Thermometer, contentDescription = "hot") },
                 text = {
                     Text(
@@ -138,105 +128,50 @@ fun HomePage() {
                         fontWeight = FontWeight.Medium
                     )
                 },
-                onClick = { hotTap.on() },
+                onClick = { hotTap.on(timeout = sliderValue) },
             )
             Spacer(Modifier.width(25.dp))
-            SuperFloatingActionButton(
-                disabled = !hotTap.available() || !coldTap.available(),
-                icon = {
-                    Icon(
-                        imageVector = WeatherIcons.Hail,
-                        contentDescription = "mixed"
-                    )
-                },
-                text = {
-                    Text(
-                        "兑水",
-                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp),
-                        fontFamily = SansFamily,
-                        fontWeight = FontWeight.Medium
-                    )
-                },
-                onClick = {
-                    mix(hotTap, coldTap)
-                }
-            )
+            SuperFloatingActionButton(elevation = FloatingActionButtonDefaults.elevation(
+                defaultElevation = 0.dp,
+                pressedElevation = 0.dp,
+                focusedElevation = 0.dp,
+                hoveredElevation = 0.dp,
+            ), disabled = !hotTap.available() || !coldTap.available(), icon = {
+                Icon(
+                    imageVector = WeatherIcons.Hail, contentDescription = "mixed"
+                )
+            }, text = {
+                Text(
+                    "兑水",
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp),
+                    fontFamily = SansFamily,
+                    fontWeight = FontWeight.Medium
+                )
+            }, onClick = {
+                mix(hotTap, coldTap, timeout = sliderValue)
+            })
             Spacer(Modifier.width(25.dp))
-            SuperFloatingActionButton(
-                disabled = !coldTap.available(),
-                icon = {
-                    Icon(
-                        imageVector = WeatherIcons.ThermometerExterior,
-                        contentDescription = "cold"
-                    )
-                },
-                text = {
-                    Text(
-                        "凉水",
-                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp),
-                        fontFamily = SansFamily,
-                        fontWeight = FontWeight.Medium
-                    )
-                },
-                onClick = {
-                    coldTap.on()
-                },
-//                onLongClick = {
-//                    val sharedToken = UserPersistentStorage(context).get()?.wallet?.balance
-//                    if (sharedToken.isNullOrEmpty()) {
-//                        Toast.makeText(context, "Token void", Toast.LENGTH_SHORT).show()
-//                    } else {
-//                        Toast.makeText(context, sharedToken, Toast.LENGTH_SHORT).show()
-//                    }
-//                },
-            )
+            SuperFloatingActionButton(elevation = FloatingActionButtonDefaults.elevation(
+                defaultElevation = 0.dp,
+                pressedElevation = 0.dp,
+                focusedElevation = 0.dp,
+                hoveredElevation = 0.dp,
+            ), disabled = !coldTap.available(), icon = {
+                Icon(
+                    imageVector = WeatherIcons.ThermometerExterior, contentDescription = "cold"
+                )
+            }, text = {
+                Text(
+                    "凉水",
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 16.sp),
+                    fontFamily = SansFamily,
+                    fontWeight = FontWeight.Medium
+                )
+            }, onClick = {
+                coldTap.on(timeout = sliderValue)
+            })
         }
-    }
-    if (showPopup) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Surface(
-                modifier = Modifier.size(270.dp, 380.dp),
-                shape = RoundedCornerShape(48.dp),
-                color = MaterialTheme.colorScheme.primaryContainer,
-                content = {
-                    Column(
-                        modifier = Modifier,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = "${sliderValue.toInt()}″",
-                            modifier = Modifier,
-                            style = MaterialTheme.typography.titleLarge.copy(fontSize = 86.sp),
-                            color = MaterialTheme.colorScheme.primary,
-                            fontFamily = SansFamily,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Spacer(modifier = Modifier.height(30.dp))
-                        Popup(
-                            alignment = Alignment.Center,
-                            onDismissRequest = { showPopup = false },
-                        ) {
-                            VerticalSlider(
-                                value = sliderValue,
-                                onValueChange = { sliderValue = it },
-                                min = 0,
-                                max = 30,
-                                onFinished = { value ->
-                                    Toast.makeText(context, "Wait...$value", Toast.LENGTH_SHORT)
-                                        .show()
-                                    showPopup = false
-
-                                },
-                                modifier = Modifier
-                                    .height(380.dp)
-                                    .blur(36.dp)
-                            )
-                        }
-                    }
-
-                })
-        }
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }
 

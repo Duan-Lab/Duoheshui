@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class TapDeviceWithAction(val context: Context, private val type: ShareUtil.TapDeviceType) {
-    private val looper = Looper.getMainLooper()
+    val looper = Looper.getMainLooper()
 
     fun available(): Boolean {
         return UserPersistentStorage(context).get()?.token != null &&
@@ -51,12 +51,12 @@ class TapDeviceWithAction(val context: Context, private val type: ShareUtil.TapD
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    fun on() {
+    fun on(timeout: Float = 0f) {
         if (UserPersistentStorage(context).get()?.token == null) {
             Handler(looper).post {
                 Toast.makeText(
                     context,
-                    "Please login",
+                    "请先登录",
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -64,12 +64,22 @@ class TapDeviceWithAction(val context: Context, private val type: ShareUtil.TapD
             Handler(looper).post {
                 Toast.makeText(
                     context,
-                    "Please set ${type.type} tap device",
+                    "请设置 ${type.type} 水龙头",
                     Toast.LENGTH_SHORT
                 ).show()
             }
         } else {
+            if (!timeout.equals(0f)) {
+                Handler(looper).post {
+                    Toast.makeText(
+                        context,
+                        "${timeout.toInt()} 秒之后开启",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
             GlobalScope.launch(context = Dispatchers.IO) {
+                delay((timeout * 1000).toLong())
                 this@TapDeviceWithAction.onSync()
             }
         }
@@ -101,8 +111,18 @@ fun waitTillTolled(context: Context, maxTries: Int = 40, retryInterval: Int = 50
     }
 
 @OptIn(DelicateCoroutinesApi::class)
-fun mix(hotTap: TapDeviceWithAction, coldTap: TapDeviceWithAction) {
+fun mix(hotTap: TapDeviceWithAction, coldTap: TapDeviceWithAction, timeout: Float = 0f) {
+    if (!timeout.equals(0f)) {
+        Handler(hotTap.looper).post {
+            Toast.makeText(
+                hotTap.context,
+                "${timeout.toInt()} 秒之后开启",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
     GlobalScope.launch(context = Dispatchers.IO) {
+        delay((timeout * 1000).toLong())
         hotTap.onSync()
         if (waitTillTolled(hotTap.context)) {
             coldTap.onSync()
