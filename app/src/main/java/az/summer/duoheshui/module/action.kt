@@ -86,7 +86,7 @@ class TapDeviceWithAction(val context: Context, private val type: ShareUtil.TapD
     }
 }
 
-fun waitTillTolled(context: Context, maxTries: Int = 40, retryInterval: Int = 500) =
+fun waitTillTolled(context: Context, maxTries: Int = 60, retryInterval: Int = 500) =
     runBlocking<Boolean> {
         val initialBalance = UserBalanceStorage(context).get()?.wallet?.balance?.toFloatOrNull()
         if (initialBalance == null) {

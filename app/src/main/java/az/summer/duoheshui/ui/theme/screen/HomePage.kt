@@ -56,6 +56,7 @@ import compose.icons.weathericons.Hail
 import compose.icons.weathericons.Thermometer
 import compose.icons.weathericons.ThermometerExterior
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlin.math.roundToInt
 
 
 @OptIn(DelicateCoroutinesApi::class, ExperimentalMaterial3Api::class)
@@ -64,6 +65,7 @@ fun HomePage() {
     //for Toast
     val context = LocalContext.current
 
+    val maxDelay = 20f
     var sliderValue by remember { mutableStateOf(ShareUtil.getString("delay", context)?.toFloat() ?: 0f) }
 
     val coldTap = TapDeviceWithAction(context, ShareUtil.TapDeviceType.COLD)
@@ -91,8 +93,8 @@ fun HomePage() {
                 sliderValue = it
                 ShareUtil.putString("delay", sliderValue.toString(), context)
             },
-            valueRange = 0f..10f,
-            steps = 10,
+            valueRange = 0f..maxDelay,
+            steps = maxDelay.roundToInt(),
         )
         Row(
             modifier = Modifier
@@ -105,7 +107,7 @@ fun HomePage() {
                 style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.tertiary)
             )
             Text(
-                text = "10s",
+                text = "${maxDelay.roundToInt()}s",
                 style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.tertiary)
             )
         }
