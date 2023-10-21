@@ -1,28 +1,25 @@
 package az.summer.duoheshui.ui.theme.screen
 
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
@@ -49,7 +46,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.BaselineShift
@@ -74,15 +70,13 @@ import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
-import compose.icons.AllIcons
 import compose.icons.FeatherIcons
 import compose.icons.FontAwesomeIcons
 import compose.icons.feathericons.CreditCard
 import compose.icons.feathericons.Settings
-import compose.icons.fontawesomeicons.Regular
 import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.Camera
-import compose.icons.fontawesomeicons.solid.Wallet
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -97,7 +91,9 @@ var encryptoHotDevice = CC().encrypt(enSetDrinkDevice(hotDevice.component1().tex
 var coldDevice = mutableStateOf(TextFieldValue(""))
 var encryptoColdDevice = CC().encrypt(enSetDrinkDevice(coldDevice.component1().text))
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class,
+    DelicateCoroutinesApi::class
+)
 @Composable
 fun SettingPage() {
 
@@ -198,41 +194,42 @@ fun SettingPage() {
                                     verifyButtonState = true
 
                                 },
-                                modifier = Modifier.width(280.dp),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                             )
-                            Spacer(modifier = Modifier.height(20.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
                             Row(
-                                modifier = Modifier, verticalAlignment = CenterVertically
+                                verticalAlignment = CenterVertically
                             ) {
-                                Box(modifier = Modifier.width(160.dp)) {
-                                    TextField(
-                                        value = verifyCode.value,
-                                        label = {
-                                            Text(
-                                                text = "验证码",
-                                                fontFamily = SansFamily,
-                                                fontWeight = FontWeight.Medium
-                                            )
-                                        },
-                                        onValueChange = {
-                                            verifyCode.value = it
-                                            encryptocode = CC().encrypt(
-                                                (enVcode(
-                                                    verifyCode.component1().text,
-                                                    phoneNum.component1().text
-                                                ))
-                                            )
-                                        },
-                                        modifier = Modifier.focusRequester(focusRequester),
-                                        singleLine = true,
-                                        colors = TextFieldDefaults.outlinedTextFieldColors(),
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(20.dp))
+                                OutlinedTextField(
+                                    value = verifyCode.value,
+                                    label = {
+                                        Text(
+                                            text = "验证码",
+                                            fontFamily = SansFamily,
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                    },
+                                    onValueChange = {
+                                        verifyCode.value = it
+                                        encryptocode = CC().encrypt(
+                                            (enVcode(
+                                                verifyCode.component1().text,
+                                                phoneNum.component1().text
+                                            ))
+                                        )
+                                    },
+                                    modifier = Modifier.focusRequester(focusRequester).weight(2f),
+                                    singleLine = true,
+                                    colors = TextFieldDefaults.outlinedTextFieldColors(),
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                )
+                                Spacer(modifier = Modifier.width(16.dp))
                                 FilledTonalButton(
+                                    modifier = Modifier
+                                        .height(52.dp)
+                                        .offset(y = 3.dp)
+                                        .weight(1f),
                                     enabled = verifyButtonState && phoneNum.value.text.length == 11,
                                     onClick = {
                                         posttty(
