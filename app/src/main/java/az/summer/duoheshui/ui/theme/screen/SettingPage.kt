@@ -426,7 +426,7 @@ fun SettingPage() {
             title = if (UserBalanceStorage(
                     context
                 ).get()?.wallet?.balance.isNullOrEmpty()
-            ) "Setting" else UserBalanceStorage(
+            ) "设置" else UserBalanceStorage(
                 context
             ).get()?.wallet!!.balance + " CNY",
             icon = if (UserPersistentStorage(context).get()?.token == null) Icons.Outlined.Settings else FontAwesomeIcons.Solid.Wallet
