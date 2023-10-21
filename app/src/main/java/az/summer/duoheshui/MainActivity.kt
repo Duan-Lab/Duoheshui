@@ -6,6 +6,15 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -36,6 +45,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.view.WindowCompat
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import az.summer.duoheshui.module.AboutStar
 import az.summer.duoheshui.ui.theme.DuoheshuiTheme
 import az.summer.duoheshui.ui.theme.SansFamily
@@ -68,7 +81,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val currentScreen = mutableStateOf(Screen.Home.id)
-
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         prefs = getSharedPreferences("cal", MODE_PRIVATE)
         val lastExit = prefs.getString("last_exit", "2023-06-01")
         try {
@@ -89,6 +102,7 @@ class MainActivity : ComponentActivity() {
                 var openLoveDialog by remember { mutableStateOf(false) }
                 // A surface container using the 'background' color from the theme
                 val context = LocalContext.current
+                val navController = rememberNavController()
 
                 Surface(
                     color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()
@@ -129,17 +143,30 @@ class MainActivity : ComponentActivity() {
                         })
 
                     }, bottomBar = {
-                        Navigation(currentScreenId = currentScreen.value) {
-                            currentScreen.value = it.id
-                        }
-                    }) {
-                        it.calculateBottomPadding()
-                        Box(modifier = Modifier.padding(it)) {
-                            when (currentScreen.value) {
-                                Screen.Home.id -> HomePage()
-                                Screen.Profile.id -> ProfilePage()
-                                Screen.Setting.id -> SettingPage()
+                        Navigation(navController)
+                    }) { innerPadding ->
+                        NavHost(
+                            navController,
+                            startDestination = Screen.Home.id,
+                            Modifier.padding(innerPadding),
+                            enterTransition = {
+                                fadeIn(
+                                    animationSpec = tween(
+                                        120, easing = EaseIn
+                                    )
+                                )
+                            },
+                            exitTransition = {
+                                fadeOut(
+                                    animationSpec = tween(
+                                        120, easing = EaseOut
+                                    )
+                                )
                             }
+                        ) {
+                            composable(Screen.Home.id) { HomePage() }
+                            composable(Screen.Profile.id) { ProfilePage() }
+                            composable(Screen.Setting.id) { SettingPage() }
                         }
                     }
 

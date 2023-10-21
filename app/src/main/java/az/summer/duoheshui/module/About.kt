@@ -103,7 +103,7 @@ fun AboutStar() {
                         context.startActivity(
                             Intent(
                                 Intent.ACTION_VIEW,
-                                Uri.parse("https://github.com/aixiao0621/Duoheshui")
+                                Uri.parse("https://github.com/StevenRCE0/Duoheshui")
                             )
                         )
                     }, modifier = Modifier.size(80.dp)
@@ -196,7 +196,7 @@ fun About() {
                         ContextCompat.startActivity(
                             context, Intent(
                                 Intent.ACTION_VIEW,
-                                Uri.parse("https://github.com/aixiao0621/Duoheshui")
+                                Uri.parse("https://github.com/StevenRCE0/Duoheshui")
                             ), null
                         )
                     }, modifier = Modifier.size(80.dp)

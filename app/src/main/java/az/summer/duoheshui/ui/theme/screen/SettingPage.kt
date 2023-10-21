@@ -52,6 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -73,7 +74,12 @@ import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
+import compose.icons.AllIcons
+import compose.icons.FeatherIcons
 import compose.icons.FontAwesomeIcons
+import compose.icons.feathericons.CreditCard
+import compose.icons.feathericons.Settings
+import compose.icons.fontawesomeicons.Regular
 import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.Camera
 import compose.icons.fontawesomeicons.solid.Wallet
@@ -155,7 +161,10 @@ fun SettingPage() {
                     confirmButton = {
                         Button(enabled = !verifyCode.component1().text.isEmpty(), onClick = {
                             posttty(
-                                "loginByCode", postmsg("loginByCode", encryptocode), context, cbOnLogin = {
+                                "loginByCode",
+                                postmsg("loginByCode", encryptocode),
+                                context,
+                                cbOnLogin = {
                                     openDialog = false
                                 }
                             )
@@ -224,7 +233,8 @@ fun SettingPage() {
                                 }
                                 Spacer(modifier = Modifier.width(20.dp))
                                 FilledTonalButton(
-                                    enabled = verifyButtonState && phoneNum.value.text.length == 11, onClick = {
+                                    enabled = verifyButtonState && phoneNum.value.text.length == 11,
+                                    onClick = {
                                         posttty(
                                             "sendCode",
                                             postmsg("sendCode", encryptomobile),
@@ -237,7 +247,8 @@ fun SettingPage() {
                                             }
                                         }
                                         focusRequester.requestFocus()
-                                    }, shape = RoundedCornerShape(16.dp)
+                                    },
+                                    shape = RoundedCornerShape(16.dp)
                                 ) {
                                     Text(
                                         text = "发送",
@@ -421,16 +432,26 @@ fun SettingPage() {
                 }
             })
         }
-        MainSettingItem(
-            selected = true,
-            title = if (UserBalanceStorage(
-                    context
-                ).get()?.wallet?.balance.isNullOrEmpty()
-            ) "设置" else UserBalanceStorage(
+        if (
+            (UserBalanceStorage(
                 context
-            ).get()?.wallet!!.balance + " CNY",
-            icon = if (UserPersistentStorage(context).get()?.token == null) Icons.Outlined.Settings else FontAwesomeIcons.Solid.Wallet
-        )
+            ).get()?.wallet?.balance.isNullOrEmpty())
+        ) {
+            MainSettingItem(
+                selected = true,
+                title = "设置",
+                icon = FeatherIcons.Settings,
+                baselineShift = BaselineShift(0.05f)
+            )
+        } else {
+            MainSettingItem(
+                selected = true,
+                title = UserBalanceStorage(
+                    context
+                ).get()?.wallet!!.balance + " CNY",
+                icon = FeatherIcons.CreditCard
+            )
+        }
         Spacer(modifier = Modifier.height(25.dp))
         SettingItem(modifier = Modifier,
             true,

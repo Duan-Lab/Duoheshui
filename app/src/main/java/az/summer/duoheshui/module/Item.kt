@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,9 +26,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.BaselineShift
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import az.summer.duoheshui.ui.theme.SansFamily
+import compose.icons.FeatherIcons
+import compose.icons.feathericons.CreditCard
+import compose.icons.feathericons.Settings
 
 @Composable
 fun SettingItem(
@@ -103,10 +110,11 @@ fun MainSettingItem(
     title: String,
     desc: String? = null,
     icon: ImageVector? = null,
+    baselineShift: BaselineShift = BaselineShift.None,
 ) {
     val view = LocalView.current
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(90.dp)
             .padding(horizontal = 16.dp)
@@ -124,7 +132,7 @@ fun MainSettingItem(
                 contentDescription = title,
                 modifier = Modifier
                     .padding(start = 16.dp, end = 24.dp)
-                    .width(48.dp),
+                    .fillMaxHeight().width(32.dp),
                 tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -132,7 +140,7 @@ fun MainSettingItem(
             Text(
                 text = title,
                 maxLines = if (desc == null) 2 else 1,
-                style = MaterialTheme.typography.titleLarge.copy(fontSize = 32.sp),
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 32.sp, baselineShift = baselineShift),
                 color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                 fontFamily = SansFamily,
                 fontWeight = FontWeight.Medium
@@ -150,4 +158,23 @@ fun MainSettingItem(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun SettingItemPreview() {
+    MainSettingItem(
+        selected = true,
+        title = "设置",
+        icon = FeatherIcons.Settings
+    )
+}
+@Preview
+@Composable
+fun BalanceItemPreview() {
+    MainSettingItem(
+        selected = true,
+        title = "299.99 CNY",
+        icon = FeatherIcons.CreditCard
+    )
 }
