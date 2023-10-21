@@ -103,56 +103,50 @@ fun MainSettingItem(
     title: String,
     desc: String? = null,
     icon: ImageVector? = null,
-    onClick: () -> Unit,
 ) {
     val view = LocalView.current
-    Surface(
-        modifier = modifier
-            .alpha(if (enable) 1f else 1f),
-        onClick = onClick
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(90.dp)
+            .padding(horizontal = 16.dp)
+            .background(
+                color = if (selected) FloatingActionButtonDefaults.containerColor else Color.Unspecified,
+                shape = RoundedCornerShape(36.dp)
+            )
+            .alpha(if (enable) 1f else .5f)
+            .padding(8.dp, 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(90.dp)
-                .padding(horizontal = 16.dp)
-                .background(
-                    color = if (selected) FloatingActionButtonDefaults.containerColor else Color.Unspecified,
-                    shape = RoundedCornerShape(36.dp)
-                )
-                .padding(8.dp, 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            icon?.let {
-                Icon(
-                    imageVector = it,
-                    contentDescription = title,
-                    modifier = Modifier
-                        .padding(start = 16.dp, end = 24.dp)
-                        .width(48.dp),
-                    tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            Column(modifier = Modifier.weight(1f)) {
+        icon?.let {
+            Icon(
+                imageVector = it,
+                contentDescription = title,
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 24.dp)
+                    .width(48.dp),
+                tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                maxLines = if (desc == null) 2 else 1,
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 32.sp),
+                color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                fontFamily = SansFamily,
+                fontWeight = FontWeight.Medium
+            )
+            desc?.let {
                 Text(
-                    text = title,
-                    maxLines = if (desc == null) 2 else 1,
-                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 32.sp),
-                    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                    text = it,
+                    color = if (selected) MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
+                    else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    maxLines = 1,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontFamily = SansFamily,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Light
                 )
-                desc?.let {
-                    Text(
-                        text = it,
-                        color = if (selected) MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
-                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                        maxLines = 1,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontFamily = SansFamily,
-                        fontWeight = FontWeight.Light
-                    )
-                }
             }
         }
     }

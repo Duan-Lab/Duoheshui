@@ -1,6 +1,7 @@
 package az.summer.duoheshui.module
 
 import android.content.Context
+import az.summer.duoheshui.ui.theme.screen.encryptomobile
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import okhttp3.Call
@@ -8,7 +9,6 @@ import okhttp3.Callback
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okio.IOException
 import org.json.JSONObject
@@ -114,6 +114,16 @@ fun userInfoPostmsg(encryptodata: String, token: String): String {
 
 class UserBalanceStorage(private val context: Context) {
     fun get(): User? {
+        if (encryptomobile.isEmpty() || UserPersistentStorage(context).get()?.token.isNullOrEmpty()) {
+            return null
+        }
+        getUserInfo(
+            userInfoPostmsg(
+                encryptomobile,
+                UserPersistentStorage(context).get()?.token.toString()
+            ),
+            context
+        )
         val preferenceString = ShareUtil.getString("balance", context)
         return try {
             Gson().fromJson(preferenceString, User::class.java)
@@ -121,5 +131,9 @@ class UserBalanceStorage(private val context: Context) {
             println(error.localizedMessage)
             null
         }
+    }
+
+    fun clear() {
+        ShareUtil.putString("balance", null, context)
     }
 }

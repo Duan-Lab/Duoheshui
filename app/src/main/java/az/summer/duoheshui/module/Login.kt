@@ -1,6 +1,8 @@
 package az.summer.duoheshui.module
 
 import android.content.Context
+import android.os.Looper
+import android.widget.Toast
 import com.google.gson.Gson
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +19,7 @@ var currentTime: Long = System.currentTimeMillis()
 var userInfo: String = ""
 
 @OptIn(DelicateCoroutinesApi::class)
-fun posttty(postType: String, postData: String, context: Context, cb: (() -> Unit)? = null) {
+fun posttty(postType: String, postData: String, context: Context, cbOnLogin: (() -> Unit)? = null, cb: (() -> Unit)? = null) {
     val url = URL("http://newxiaotian.tianji-inc.com/api/v1/UserApi/$postType")
     val conn = url.openConnection() as HttpURLConnection
     conn.requestMethod = "POST"
@@ -46,14 +48,27 @@ fun posttty(postType: String, postData: String, context: Context, cb: (() -> Uni
         val inputStream = conn.inputStream
         val response = inputStream.bufferedReader().use { it.readText() }
 
-        UserPersistentStorage(context).set(response)
         println("\nSending 'POST' request to URL : $url")
         println("Post parameters : $postData")
         println("Response Code : $responseCode")
+        println("Response : $response")
 
-        if (cb != null) {
-            cb()
+        if (responseCode == 200) {
+            val parsedResponse = JSONObject(response)
+            if (postType == "loginByCode" && parsedResponse.getInt("code") == 200) {
+                UserPersistentStorage(context).set(response)
+                cbOnLogin?.invoke()
+            }
+            Looper.prepare()
+            Toast.makeText(
+                context,
+                parsedResponse.getString("msg"),
+                Toast.LENGTH_SHORT
+            ).show()
+            Looper.loop()
         }
+
+        cb?.invoke()
     }
 
 }

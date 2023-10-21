@@ -1,6 +1,10 @@
 package az.summer.duoheshui.module
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.widget.Toast
 import az.summer.duoheshui.ui.theme.screen.encryptomobile
 import com.google.gson.Gson
 import okhttp3.Call
@@ -58,6 +62,13 @@ fun drinkingPost(type: String, data: String, context: Context) {
                         val orderSn = CC().decrypt(value)
                         OrderSnStorage(context).set(orderSn)
                         println(OrderSnStorage(context).get()?.order_sn)
+                        Handler(Looper.getMainLooper()).post {
+                            Toast.makeText(
+                                context,
+                                json.getString("msg"),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                     getUserInfo(
                         userInfoPostmsg(

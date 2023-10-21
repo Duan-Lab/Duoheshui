@@ -2,6 +2,7 @@ package az.summer.duoheshui.module
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import com.google.gson.Gson
 import org.json.JSONObject
 
@@ -24,6 +25,10 @@ object ShareUtil {
         if (!value.isNullOrBlank()) {
             val editor: SharedPreferences.Editor = getSps(context).edit()
             editor.putString(key, value)
+            editor.apply()
+        } else {
+            val editor: SharedPreferences.Editor = getSps(context).edit()
+            editor.remove(key)
             editor.apply()
         }
     }
@@ -55,5 +60,11 @@ class UserPersistentStorage(private val context: Context) {
             println(error.localizedMessage)
             null
         }
+    }
+
+    fun clear() {
+        userInfo = ""
+        ShareUtil.putString("user", null, context)
+        Log.v("UserPersistentStorage", "clear")
     }
 }
